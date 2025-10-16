@@ -27,16 +27,16 @@ class Animal
 
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'La race est obligatoire')]
-    #[Assert\Length(
-        min: 3,
-        max: 50,
-        minMessage: 'La race doit comporter au moins {{ limit }} caractères',
-        maxMessage: 'La race ne peut pas dépasser {{ limit }} caractères',
-    )]
+    // #[ORM\Column(length: 255)]
+    // #[Assert\NotBlank(message: 'La race est obligatoire')]
+    // #[Assert\Length(
+    //     min: 3,
+    //     max: 50,
+    //     minMessage: 'La race doit comporter au moins {{ limit }} caractères',
+    //     maxMessage: 'La race ne peut pas dépasser {{ limit }} caractères',
+    // )]
 
-    private ?string $race = null;
+    // private ?string $race = null;
 
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $dateNaissance = null;
@@ -61,16 +61,16 @@ class Animal
         return $this;
     }
 
-    public function getRace(): ?string
-    {
-        return $this->race;
-    }
+    // public function getRace(): ?string
+    // {
+    //     return $this->race;
+    // }
 
-    public function setRace(string $race): static
-    {
-        $this->race = $race;
-        return $this;
-    }
+    // public function setRace(string $race): static
+    // {
+    //     $this->race = $race;
+    //     return $this;
+    // }
 
     public function getDateNaissance(): ?\DateTimeInterface
     {

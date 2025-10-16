@@ -32,16 +32,31 @@
                 {% endif %}
             </li>
             <li class="nav-item ">
+                <a class="nav-link" href="{{ path('app_fournisseur')}}">Fournisseurs</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link" href="{{ path('app_evenement')}}">Evenements</a>
+            </li>
+            <li class="nav-item ">
                 <a class="nav-link" href="{{ path('app_produit')}}">Produits</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Recettes</a>
+                <a class="nav-link" href="{{ path('app_recette')}}">Recettes</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Clients</a>
+                <a class="nav-link" href="{{ path('app_client')}}">Clients</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Commandes</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Les Animaux
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{{ path('app_race_animal')}}">Les races</a>
+                    <a class="dropdown-item" href="{{ path('app_animal')}}">Les animaux</a>
+                </div>
             </li>
             <!-- Dropdown -->
             <li class="nav-item dropdown">

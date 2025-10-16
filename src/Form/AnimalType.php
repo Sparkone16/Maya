@@ -15,7 +15,7 @@ class AnimalType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('race')
+            // ->add('race')
             ->add('dateNaissance')
             ->add('raceAnimal', EntityType::class, [
                 'class' => RaceAnimal::class,

@@ -30,27 +30,29 @@ final class AnimalController extends AbstractController
         ]);
     }
 
-    #[Route('/animal/creer', name: 'app_animal_creer')]
-    public function creerAnimal(EntityManagerInterface $entityManager): Response
-    {
-        $animal = new Animal();
-        $animal->setNom('Rex');
-        $animal->setRace('Berger allemand');
-        $animal->setDateNaissance(new \DateTime('2020-06-15'));
 
-        $race = $entityManager->getRepository(RaceAnimal::class)->findOneBy(['intitule' => 'Chien']);
+    // Test avec valeurs prédéfinies
+    // #[Route('/animal/creer', name: 'app_animal_creer')]
+    // public function creerAnimal(EntityManagerInterface $entityManager): Response
+    // {
+    //     $animal = new Animal();
+    //     $animal->setNom('Rex');
+    //     $animal->setRace('Berger allemand');
+    //     $animal->setDateNaissance(new \DateTime('2020-06-15'));
 
-        if (!$race) {
-            return new Response('Erreur : aucune race "Chien" trouvée.');
-        }
+    //     $race = $entityManager->getRepository(RaceAnimal::class)->findOneBy(['intitule' => 'Chien']);
 
-        $animal->setRaceAnimal($race);
+    //     if (!$race) {
+    //         return new Response('Erreur : aucune race "Chien" trouvée.');
+    //     }
 
-        $entityManager->persist($animal);
-        $entityManager->flush();
+    //     $animal->setRaceAnimal($race);
 
-        return new Response('Nouvel animal créé : ' . $animal->getNom() . ' (id ' . $animal->getId() . ') — Race : ' . $race->getIntitule());
-    }
+    //     $entityManager->persist($animal);
+    //     $entityManager->flush();
+
+    //     return new Response('Nouvel animal créé : ' . $animal->getNom() . ' (id ' . $animal->getId() . ') — Race : ' . $race->getIntitule());
+    // }
 
     #[Route('/animal/ajouter', name: 'app_animal_ajouter', methods: ['POST'])]
     public function ajouter(Request $request, EntityManagerInterface $entityManager, AnimalRepository $repository): Response
