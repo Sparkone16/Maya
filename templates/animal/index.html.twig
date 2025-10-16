@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Animaux{% endblock %}
+
+{% block body %}
+<div class="col-md-10 contenu-blanc">
+
+    <h1>Les <span>{{ lesAnimaux | length }}</span> animaux</h1>
+
+    {{ include('messages.html.twig') }}
+
+    <div class="contenu">
+        <table class="table table-striped table-advance table-hover">
+            <thead>
+            <tr class="bg-entete">
+                <th>Identifiant</th>
+                <th>Nom</th>
+                <th>Race</th>
+                <th>Date de naissance</th>
+                <th>Race Animal</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {# Formulaire pour ajouter un nouvel animal #}
+            <tr>
+                {{ form_start(formCreation)}}
+                <td>Nouveau</td>
+                <td>{{ form_widget(formCreation.nom) }}{{ form_errors(formCreation.nom) }}</td>
+                <td>{{ form_widget(formCreation.race) }}{{ form_errors(formCreation.race) }}</td>
+                <td>{{ form_widget(formCreation.dateNaissance) }}{{ form_errors(formCreation.dateNaissance) }}</td>
+                <td>{{ form_widget(formCreation.raceAnimal) }}{{ form_errors(formCreation.raceAnimal) }}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_animal_ajouter') }}" title="Enregistrer nouvel animal">
+                        <i class="fa fa-save"></i> Enregistrer
+                    </button>
+                    <button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
+                        <i class="fa fa-eraser"></i> Annuler
+                    </button>
+                </td>
+                {{ form_rest(formCreation) }}
+                {{ form_end(formCreation)}}
+            </tr>
+
+            {# Liste des animaux existants #}
+            {% for key, animal in lesAnimaux %}
+                <tr>
+                    {% if animal.id != idAnimalModif %}
+                        <td>{{ animal.id }}</td>
+                        <td>{{ animal.nom }}</td>
+                        <td>{{ animal.race }}</td>
+                        <td>{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '—' }}</td>
+                        <td>{{ animal.raceAnimal ? animal.raceAnimal.intitule : '—' }}</td>
+                        <td>
+                            <form>
+                                <button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_animal_demandermodification', {'id' : animal.id }) }}" title="Modifier">
+                                    <i class="fa fa-pencil"></i> Modifier
+                                </button>
+                                <button type="submit" class="btn btn-danger btn-sm" formaction="{{ path('app_animal_supprimer', {'id' : animal.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cet animal ?');">
+                                    <i class="fa fa-trash-o"></i> Supprimer
+                                </button>
+                                <input type = "hidden" name="_token" value="{{ csrf_token('action-item' ~ animal.id) }}">     {#  ~     pour concaténer des chaines en twig #}
+                            </form>
+                        </td>
+                    {% else %}
+
+                        <!-- formulaire pour modifier un animal -->
+                        {{ form_start(formModification) }}
+                        <td>{{ animal.id }}</td>
+                        <td>{{ form_widget(formModification.nom) }} {{ form_errors(formModification.nom) }}</td>
+                        <td>{{ form_widget(formModification.race) }} {{ form_errors(formModification.race) }}</td>
+                        <td>{{ form_widget(formModification.dateNaissance) }} {{ form_errors(formModification.dateNaissance) }}</td>
+                        <td>{{ form_widget(formModification.raceAnimal) }} {{ form_errors(formModification.raceAnimal) }}</td>
+                        <td class="col-md-4">
+                            <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_animal_modifier', {'id' : animal.id }) }}"  title="Enregistrer"><i class="fa fa-save"></i> Enregistrer</button>
+                            <button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie"><i class="fa fa-eraser"></i> Effacer</button>
+                            <button class="btn btn-warning btn-sm" type="submit" formaction="{{ path('app_animal') }}" title="Annuler"><i class="fa fa-undo"></i> Annuler</button>
+                        </td>
+                        {# Ceci va générer le champ CSRF #}
+                        {{ form_rest(formModification) }}
+                        {{ form_end(formModification) }}
+                    {% endif %}
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div> <!-- fin div contenu -->
+</div> <!-- fin div col-md-10 -->
+{% endblock %}

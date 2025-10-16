@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Clients
+{% endblock %}
+
+{% block body %}
+	<div class="col-md-10 contenu-blanc">
+
+		<h1>Les
+			<span>
+				{{  lesClients | length }}
+			</span> clients </h1>
+		{{ include('messages.html.twig') }}
+
+		<div class="contenu">
+			<table class="table table-striped table-advance table-hover">
+				<thead>
+					<tr class="bg-entete">
+                        <th>id</th>
+						<th>Nom</th>
+						<th>Prénom</th>
+						<th>Adresse</th>
+						<th>Mail</th>
+						<th>Numéro de téléphone</th>
+						<th>Date d'entrée en relation</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<!-- formulaire pour ajouter une nouveau client-->
+					<tr>
+						{{ form_start(formCreation) }}
+						<td class="col-md-1">Nouveau</td>
+						<td class="col-md-1">{{ form_widget(formCreation.nom) }}
+							{{ form_errors(formCreation.nom) }}</td>
+						<td class="col-md-1">{{ form_widget(formCreation.prenom) }}
+							{{ form_errors(formCreation.prenom) }}</td>
+						<td class="col-md-1">{{ form_widget(formCreation.adresse) }}
+							{{ form_errors(formCreation.adresse) }}</td>
+						<td class="col-md-1">{{ form_widget(formCreation.mail) }}
+							{{ form_errors(formCreation.mail) }}</td>
+						<td class="col-md-1">{{ form_widget(formCreation.telephone) }}
+							{{ form_errors(formCreation.telephone) }}</td>
+						<td class="col-md-1">{{ form_widget(formCreation.dateEntreeRel) }}
+							{{ form_errors(formCreation.dateEntreeRel) }}</td>
+						<td class="col-md-3">
+							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_client_ajouter')}}" title="Enregistrer nouveau client">
+								<i class="fa fa-save"></i>
+								Enregistrer</button>
+							<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
+								<i class="fa fa-eraser"></i>
+								Annuler
+							</button>
+						</td>
+						{# Ceci va générer le champ CSRF #}
+						{{ form_rest(formCreation) }}
+						{{ form_end(formCreation) }}
+					</tr>
+
+					{% for key, client in lesClients %}
+						<tr>
+							{% if client.id != idClientModif %}
+
+								<td>{{ client.id }}</td>
+								<td>{{ client.nom }}</td>
+								<td>{{ client.prenom }}</td>
+								<td>{{ client.adresse }}</td>
+                                <td>{{ client.mail }}</td>
+								<td>{{ client.telephone }}</td>
+								<td>{{ client.dateEntreeRel|date('d/m/Y') }}</td>
+								<!-- formulaire pour demander la modification ou la suppression -->
+								<td>
+									<form>
+										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_client_demandermodification', {'id' : client.id }) }}" title="Modifier">
+											<i class="fa fa-pencil"></i>
+											Modifier</button>
+										<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_client_supprimer', {'id' : client.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');">
+											<i class="fa fa-trash-o "></i>
+											Supprimer</button>
+                                            <input type = "hidden" name="_token" value="{{ csrf_token('action-item' ~ client.id) }}">   
+                                            {#  ~     pour concaténer des chaines en twig #}
+									</form>
+								</td>
+							{% else %}
+
+								<!-- formulaire pour modifier une catégorie -->
+								{{ form_start(formModification) }}
+								<td>{{ client.id }}</td>
+
+								<td>{{ form_widget(formModification.nom) }}
+									{{ form_errors(formModification.nom) }}</td>
+								<td>{{ form_widget(formModification.prenom) }}
+									{{ form_errors(formModification.prenom) }}</td>
+								<td>{{ form_widget(formModification.adresse) }}
+									{{ form_errors(formModification.adresse) }}</td>
+								<td>{{ form_widget(formModification.mail) }}
+									{{ form_errors(formModification.mail) }}</td>
+								<td>{{ form_widget(formModification.telephone) }}
+									{{ form_errors(formModification.telephone) }}</td>
+								<td>{{ form_widget(formModification.dateEntreeRel) }}
+									{{ form_errors(formModification.dateEntreeRel) }}</td>
+								<td class="col-md-4">
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_client_modifier', {'id' : client.id }) }}" title="Enregistrer">
+										<i class="fa fa-save"></i>
+										Enregistrer</button>
+									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
+										<i class="fa fa-eraser"></i>
+										Effacer</button>
+									<button class="btn btn-warning btn-sm" type="submit" formaction="{{ path('app_client') }}" title="Annuler">
+										<i class="fa fa-undo"></i>
+										Annuler</button>
+								</td>
+								{# Ceci va générer le champ CSRF #}
+								{{ form_rest(formModification) }}
+								{{ form_end(formModification) }}
+							{% endif %}
+
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<!--fin div contenu-->
+	</div>
+	<!--fin div col-md-6-->
+{% endblock %}
