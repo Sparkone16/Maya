@@ -15,7 +15,7 @@
             <tr class="bg-entete">
                 <th>Identifiant</th>
                 <th>Nom</th>
-                <!-- <th>Race</th> -->
+                {#<th>Race</th> #}
                 <th>Date de naissance</th>
                 <th>Race Animal</th>
                 <th>Actions</th>
@@ -28,7 +28,7 @@
                 {{ form_start(formCreation)}}
                 <td>Nouveau</td>
                 <td>{{ form_widget(formCreation.nom) }}{{ form_errors(formCreation.nom) }}</td>
-                <!-- <td>{{ form_widget(formCreation.race) }}{{ form_errors(formCreation.race) }}</td> -->
+                {#<td>{{ form_widget(formCreation.race) }}{{ form_errors(formCreation.race) }}</td> #}
                 <td>{{ form_widget(formCreation.dateNaissance) }}{{ form_errors(formCreation.dateNaissance) }}</td>
                 <td>{{ form_widget(formCreation.raceAnimal) }}{{ form_errors(formCreation.raceAnimal) }}</td>
                 <td>
@@ -49,7 +49,7 @@
                     {% if animal.id != idAnimalModif %}
                         <td>{{ animal.id }}</td>
                         <td>{{ animal.nom }}</td>
-                        <!-- <td>{{ animal.race }}</td> -->
+                        {# <td>{{ animal.race }}</td> #}
                         <td>{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '—' }}</td>
                         <td>{{ animal.raceAnimal ? animal.raceAnimal.intitule : '—' }}</td>
                         <td>
@@ -69,7 +69,7 @@
                         {{ form_start(formModification) }}
                         <td>{{ animal.id }}</td>
                         <td>{{ form_widget(formModification.nom) }} {{ form_errors(formModification.nom) }}</td>
-                        <!-- <td>{{ form_widget(formModification.race) }} {{ form_errors(formModification.race) }}</td> -->
+                        {# <td>{{ form_widget(formModification.race) }} {{ form_errors(formModification.race) }}</td> #}
                         <td>{{ form_widget(formModification.dateNaissance) }} {{ form_errors(formModification.dateNaissance) }}</td>
                         <td>{{ form_widget(formModification.raceAnimal) }} {{ form_errors(formModification.raceAnimal) }}</td>
                         <td class="col-md-4">
