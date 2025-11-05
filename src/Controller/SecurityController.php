@@ -12,6 +12,14 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
+        // si après la première étape (login et mdp) nous avons un user
+        // alors redirection vers la page de saisie du code d'authentification de Google Authenticator
+        if ($this->getUser()) {
+            // dans security.yaml, nous avons indiqué la route 2fa_login 
+            // dans scheb_2fa.yaml, nous avons indiqué le template: security/2fa_form.html.twig 
+            return $this->redirectToRoute('2fa_login');
+        }
+
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
@@ -22,6 +30,13 @@ class SecurityController extends AbstractController
             'last_username' => $lastUsername,
             'error' => $error,
         ]);
+    }
+
+    #[Route('/2fa/inProgress', name: '2fa_in_progress')]
+    public function accessibleDuring2fa(): Response
+    {
+        // à compléter en cas de besoin
+        return new Response('This page is accessible during 2fa');
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
