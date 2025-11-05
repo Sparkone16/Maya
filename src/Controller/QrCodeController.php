@@ -42,9 +42,9 @@ class QrCodeController extends AbstractController
             size: 200,
             margin: 10,
             roundBlockSizeMode: RoundBlockSizeMode::Margin,
-            logoPath: $this->getParameter('kernel.project_dir').'/assets/img/maya1.png',
-            logoResizeToWidth: 50,
-            logoPunchoutBackground: true,
+            // logoPath: $this->getParameter('kernel.project_dir').'/assets/img/maya1.png',
+            // logoResizeToWidth: 50,
+            // logoPunchoutBackground: true,
             labelText: 'La ferme Maya',
             labelFont: new OpenSans(20),
             labelAlignment: LabelAlignment::Center
