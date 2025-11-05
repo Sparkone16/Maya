@@ -1,0 +1,38 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    <div class="col-md-8 contenu-blanc mx-auto">
+        <h1 class="text-center">Two-Factor Authentication</h1>
+        {% if authenticationError %}
+            <div class="alert alert-danger alert-dismissible" role="alert">{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</div>
+        {% endif %}
+
+        <div class="contenu text-center">
+            <form class="form" action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post">
+                <div>
+                    <label for="_auth_code">Entrez le code fourni par l'application d'authentification
+                        <code>
+                            {{ twoFactorProvider }}</code>
+                    </label>
+                    <div>
+                        <input
+                        id="_auth_code" type="text" name="{{ authCodeParameterName }}" autocomplete="one-time-code" autofocus/>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary btn-sm" type="submit" name="submit-button" title="Envoyer le code">
+                            Envoyer le code</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-warning btn-sm" type="submit" formaction="{{ path('app_logout') }}" title="Annuler double facteur">
+                            Annuler</button>
+                    </div>
+                </div>
+
+                {% if isCsrfProtectionEnabled %}
+                    <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

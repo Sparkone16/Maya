@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    <div class="col-md-6 contenu-blanc mx-auto text-center">
+        <h1>Authentification double facteur pour</h1>
+        <h2>{{ user.prenom ~ ' ' ~ user.nom}}</h2>
+        <div>avec</div>
+        <h4>Google Authenticator</h4>
+        <div>Secret:
+            <code>{{ user.googleAuthenticatorSecret }}</code>
+        </div>
+        <div><img src="{{ path("qr_code_ga", {'id' : user.id }) }}"/></div>
+
+        <a href="{{ path('app_user_index') }}">Retour à la liste des utilisateurs</a>
+    </div>
+{% endblock %}

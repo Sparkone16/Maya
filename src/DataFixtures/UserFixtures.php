@@ -32,6 +32,9 @@ class UserFixtures extends Fixture
             $user->setTelephone(substr($this->faker->e164PhoneNumber, 2, 10 ));
             $user->setEmail(sprintf('userdemo%d@exemple.com', $i));
             $user->setPassword($this->passwordHasher->hashPassword($user, 'userdemo'));
+            // pour les tests, on utilise la même clé secrete pour le service Google Authenticator
+            // en production, chaque user a une clé personnalisée
+            $user->setGoogleAuthenticatorSecret('VMMYU4C772ZACZYOQSGXLM6GBG62SUGEYGFLY5XEYSLHTLO5NL6A');
 
             if ($i == 0) {
                 $user->setRoles(array("ROLE_USER", "ROLE_ADMIN"));
