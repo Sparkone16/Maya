@@ -13,6 +13,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ path('app_accueil')}}">Accueil</a>
             </li>
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             <li class="nav-item">
                 {% if app.user %}
                     {% if is_granted('ROLE_ADMIN') %}
@@ -31,6 +32,7 @@
                     {% endif %}
                 {% endif %}
             </li>
+            {% endif %}
             <li class="nav-item ">
                 <a class="nav-link" href="{{ path('app_fournisseur')}}">Fournisseurs</a>
             </li>
@@ -74,7 +76,7 @@
             </li>
             <li class="nav-item">
                 {#    si un utilisateur existe (et est donc connecté)    #}
-                {% if app.user %}
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <li>
                         <a class="nav-link" href="{{ path('app_logout')}}">Se déconnecter</a>
                     </li>
@@ -87,7 +89,7 @@
             </li>
         </ul>
     </div>
-    {% if app.user %}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         <span class="navbar-brand pull-right">{{ app.user.prenom}}
             {{ app.user.nom }}</span>
     {% endif %}
