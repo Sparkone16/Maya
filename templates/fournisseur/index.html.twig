@@ -6,10 +6,19 @@
 {% block body %}
 	<div class="col-md-10 contenu-blanc">
 
-		<h1>Les
-			<span>
-				{{  lesFournisseurs | length }}
-			</span>fournisseurs</h1>
+		<h1>
+            {% if lesFournisseurs | length == 0 %}
+                Il n'y a pas de fournisseurs
+            {% elseif lesFournisseurs | length == 1%}
+                Le fournisseur
+            {% else %}
+                Les
+                <span>
+                    {{  lesFournisseurs | length }}
+                </span>
+                fournisseurs
+            {% endif %}
+        </h1>
 		{{ include('messages.html.twig') }}
 		<div class="contenu">
 			<table class="table table-striped table-advance table-hover">
@@ -22,6 +31,7 @@
                         <th>Téléphone</th>
                         <th>Nom du contact</th>
                         <th>Date entrée en relation</th>
+						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -33,7 +43,7 @@
 							{{ form_errors(formCreation.nom) }}</td>
                         <td class="col-md-1">{{ form_widget(formCreation.adresse) }}
 							{{ form_errors(formCreation.adresse) }}</td>
-                        <td class="col-md-1">{{ form_widget(formCreation.mail) }}
+                        <td class="col-md-2">{{ form_widget(formCreation.mail, {'attr': {'class': 'col-md-12'}}) }}
 							{{ form_errors(formCreation.mail) }}</td>
                         <td class="col-md-1">{{ form_widget(formCreation.telephone) }}
 							{{ form_errors(formCreation.telephone) }}</td>
@@ -41,7 +51,7 @@
 							{{ form_errors(formCreation.nomContact) }}</td>
                         <td class="col-md-1">{{ form_widget(formCreation.dateEntree) }}
 							{{ form_errors(formCreation.dateEntree) }}</td>
-						<td class="col-md-3">
+						<td class="col-md-2">
 							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_fournisseur_ajouter') }}" title="Enregistrer nouveau fournisseur">
 								<i class="fa fa-save"></i>
 								Enregistrer</button>
@@ -87,7 +97,7 @@
                                     {{ form_errors(formModification.nom) }}</td>
                                 <td>{{ form_widget(formModification.adresse) }}
                                     {{ form_errors(formModification.adresse) }}</td>
-                                <td>{{ form_widget(formModification.mail) }}
+                                <td>{{ form_widget(formModification.mail, {'attr': {'class': 'col-md-12'}}) }}
                                     {{ form_errors(formModification.mail) }}</td>
                                 <td>{{ form_widget(formModification.telephone) }}
                                     {{ form_errors(formModification.telephone) }}</td>
