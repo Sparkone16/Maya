@@ -8,6 +8,7 @@
     </button>
 
     <!-- Navbar links -->
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav ">
             <li class="nav-item">
@@ -89,6 +90,7 @@
             </li>
         </ul>
     </div>
+    {% endif %}
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         <span class="navbar-brand pull-right">{{ app.user.prenom}}
             {{ app.user.nom }}</span>
