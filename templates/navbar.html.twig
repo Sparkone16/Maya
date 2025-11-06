@@ -1,96 +1,103 @@
-<nav class="navbar navbar-expand-md bg-success navbar-dark fixed-top">
-    <!-- Brand -->
-    <a class="navbar-brand" href="#">La ferme de Maya</a>
+<nav
+	class="navbar navbar-expand-md bg-success navbar-dark fixed-top">
+	<!-- Brand -->
+	<a class="navbar-brand" href="#">La ferme de Maya</a>
 
-    <!-- Toggler/collapsible Button -->
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+	<!-- Toggler/collapsible Button -->
+	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+		<span class="navbar-toggler-icon"></span>
+	</button>
 
-    <!-- Navbar links -->
-    <div class="collapse navbar-collapse" id="collapsibleNavbar">
-        <ul class="navbar-nav ">
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_accueil')}}">Accueil</a>
-            </li>
-            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-            <li class="nav-item">
-                {% if app.user %}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_categorie')}}">Catégories</a>
-                        </li>
-                    {% endif %}
-                {% endif %}
-            </li>
-            <li class="nav-item">
-                {% if app.user %}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_user_index')}}">Utilisateurs</a>
-                        </li>
-                    {% endif %}
-                {% endif %}
-            </li>
-            {% endif %}
-            <li class="nav-item ">
-                <a class="nav-link" href="{{ path('app_fournisseur')}}">Fournisseurs</a>
-            </li>
-            <li class="nav-item ">
-                <a class="nav-link" href="{{ path('app_evenement')}}">Evenements</a>
-            </li>
-            <li class="nav-item ">
-                <a class="nav-link" href="{{ path('app_produit')}}">Produits</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_recette')}}">Recettes</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_client')}}">Clients</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('app_saisonnier')}}">Saisonniers</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Commandes</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    Les Animaux
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{{ path('app_race_animal')}}">Les races</a>
-                    <a class="dropdown-item" href="{{ path('app_animal')}}">Les animaux</a>
-                </div>
-            </li>
-            <!-- Dropdown -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    Statistiques
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Link 1</a>
-                    <a class="dropdown-item" href="#">Link 2</a>
-                    <a class="dropdown-item" href="#">Link 3</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                {#    si un utilisateur existe (et est donc connecté)    #}
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <li>
-                        <a class="nav-link" href="{{ path('app_logout')}}">Se déconnecter</a>
-                    </li>
-                {% else %}
-                    <li>
-                        <a class="nav-link" href="{{ path('app_login')}}">Se connecter</a>
-                    </li>
-                {% endif %}
+	<!-- Navbar links -->
+	<div class="collapse navbar-collapse" id="collapsibleNavbar">
+		<ul class="navbar-nav ">
+			<li class="nav-item">
+				<a class="nav-link" href="{{ path('app_accueil')}}">Accueil</a>
+			</li>
+			{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+				<li class="nav-item">
+					{% if app.user %}
+						{% if is_granted('ROLE_ADMIN') %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('app_categorie')}}">Catégories</a>
+							</li>
+						{% endif %}
+					{% endif %}
+				</li>
+				<li class="nav-item">
+					{% if app.user %}
+						{% if is_granted('ROLE_ADMIN') %}
+							<li class="nav-item">
+								<a class="nav-link" href="{{ path('app_user_index')}}">Utilisateurs</a>
+							</li>
+						{% endif %}
+					{% endif %}
+				</li>
+			{% endif %}
+			<li class="nav-item ">
+				<a class="nav-link" href="{{ path('app_fournisseur')}}">Fournisseurs</a>
+			</li>
+			<li class="nav-item ">
+				<a class="nav-link" href="{{ path('app_evenement')}}">Evenements</a>
+			</li>
+			<li class="nav-item ">
+				<a class="nav-link" href="{{ path('app_produit')}}">Produits</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="{{ path('app_recette')}}">Recettes</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="{{ path('app_client')}}">Clients</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="{{ path('app_saisonnier')}}">Saisonniers</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="#">Commandes</a>
+			</li>
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown">
+					Les Animaux
+				</a>
+				<ul class="dropdown-menu" aria-labelledby="navbardrop">
+					<li><a class="dropdown-item" href="{{ path('app_race_animal')}}" onclick="window.location.reload();">Les races</a></li>
+					<li><a class="dropdown-item" href="{{ path('app_animal')}}" onclick="window.location.reload();">Les animaux</a></li>
+				</ul>
+			</li>
+			<!-- Dropdown -->
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown">
+					Statistiques
+				</a>
+				<ul class="dropdown-menu" aria-labelledby="navbardrop">
+					<li>
+						<a class="dropdown-item" href="#" onclick="window.location.reload();">Link 1</a>
+					</li>
+					<li>
+						<a class="dropdown-item" href="#" onclick="window.location.reload();">Link 2</a>
+					</li>
+					<li>
+						<a class="dropdown-item" href="#" onclick="window.location.reload();">Link 3</a>
+					</li>
+				</ul>
+			</li>
+			<li class="nav-item">
+				{#    si un utilisateur existe (et est donc connecté)    #}
+				{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+					<li>
+						<a class="nav-link" href="{{ path('app_logout')}}">Se déconnecter</a>
+					</li>
+				{% else %}
+					<li>
+						<a class="nav-link" href="{{ path('app_login')}}">Se connecter</a>
+					</li>
+				{% endif %}
 
-            </li>
-        </ul>
-    </div>
-    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        <span class="navbar-brand pull-right">{{ app.user.prenom}}
-            {{ app.user.nom }}</span>
-    {% endif %}
+			</li>
+		</ul>
+	</div>
+	{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+		<span class="navbar-brand pull-right">{{ app.user.prenom}}
+			{{ app.user.nom }}</span>
+	{% endif %}
 </nav>
