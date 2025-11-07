@@ -54,7 +54,6 @@ security:
                 # TwoFactorBundle. So set this to any of your user providers, it doesn't matter which one.
                 provider: app_user_provider
 
-                
             logout:
                 path: app_logout
                 # where to redirect after logout
