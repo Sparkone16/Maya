@@ -30,7 +30,7 @@
                 <td>{{ user.prenom }}</td>
                 <td>{{ user.telephone }}</td>
                 <td>
-				
+				<form>
                     <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_user_show', {'id': user.id}) }}" title="Enregistrer nouvel utilisateur">
 								<i class="fa fa-search"></i>
 								Afficher</button>
@@ -40,6 +40,7 @@
 					<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_user_2fa', {'id': user.id}) }}" title="Double authentification">
 											<i class="fa fa-lock"></i>
 								2fa</button>
+                </form>
                 </td>
             </tr>
         {% else %}
