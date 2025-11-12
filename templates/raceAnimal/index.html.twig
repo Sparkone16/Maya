@@ -3,7 +3,7 @@
 {% block title %}Race Animal{% endblock %}
 
 {% block body %}
-<div class="col-md-5 contenu-blanc">
+<div class="col-md-7 contenu-blanc">
 
     <h1>
             {% if lesRaces | length == 0 %}
@@ -35,9 +35,9 @@
             {# Formulaire pour ajouter une nouvelle raceAnimal #}
             <tr>
                 {{ form_start(formCreation)}}
-                <td>Nouveau</td>
-                <td>{{ form_widget(formCreation.intitule, {'attr': {'class': 'col-md-12'}}) }}{{ form_errors(formCreation.intitule) }}</td>
-                <td>
+                <td class="col-md-1">Nouveau</td>
+                <td>{{ form_widget(formCreation.intitule, {'attr': {'class': 'col-md-4'}}) }}{{ form_errors(formCreation.intitule) }}</td>
+                <td class="col-md-2">
                     <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_ajouter') }}" title="Enregistrer nouvel Race Animal">
                         <i class="fa fa-save"></i> Enregistrer
                     </button>
@@ -75,9 +75,12 @@
                         <td class="col-md-4">
                             <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_modifier', {'id' : raceAnimal.id }) }}"  title="Enregistrer"><i class="fa fa-save"></i> Enregistrer</button>
                             <button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie"><i class="fa fa-eraser"></i> Effacer</button>
-                            <button class="btn btn-warning btn-sm" type="button" title="Annuler" onclick="window.location.href='{{ path('app_race_animal') }}'">
-										<i class="fa fa-undo"></i>
-										Annuler</button>
+                            <button class="btn btn-warning btn-sm" type="button" title="Annuler">
+								<a href="{{ path('app_race_animal') }}">
+									<i class="fa fa-undo"></i>
+									Annuler
+								</a>
+							</button>
                         </td>
                         {# Ceci va générer le champ CSRF #}
                         {{ form_rest(formModification) }}

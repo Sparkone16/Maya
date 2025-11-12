@@ -38,7 +38,6 @@ final class UserController extends AbstractController
             $secret = $googleAuthenticatorInterface->generateSecret();
             $user->setGoogleAuthenticatorSecret($secret);
 
-
             $entityManager->persist($user);
             $entityManager->flush();
 
@@ -90,7 +89,6 @@ final class UserController extends AbstractController
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
-
     #[Route('/{id}/2fa', name: 'app_user_2fa', methods: ['GET'])]
     public function user2fa(User $user): Response
     {
@@ -98,5 +96,4 @@ final class UserController extends AbstractController
             'user' => $user,
         ]);
     }
-
 }

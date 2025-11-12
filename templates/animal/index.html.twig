@@ -40,10 +40,10 @@
 					<tr>
 						{{ form_start(formCreation)}}
 						<td class="col-md-1">Nouveau</td>
-						<td class="col-md-3">{{ form_widget(formCreation.nom, { 'attr': {'class': 'col-md-12'} }) }}{{ form_errors(formCreation.nom) }}</td>
+						<td class="col-md-2">{{ form_widget(formCreation.nom, { 'attr': {'class': 'col-md-12'} }) }}{{ form_errors(formCreation.nom) }}</td>
 						{#<td>{{ form_widget(formCreation.race) }}{{ form_errors(formCreation.race) }}</td> #}
 						<td class="col-md-1">{{ form_widget(formCreation.dateNaissance, { 'attr': {'class': 'col-md-12'} }) }}{{ form_errors(formCreation.dateNaissance) }}</td>
-						<td class="col-md-3">{{ form_widget(formCreation.raceAnimal, { 'attr': {'class': 'col-md-6'} }) }}{{ form_errors(formCreation.raceAnimal) }}</td>
+						<td class="col-md-2">{{ form_widget(formCreation.raceAnimal, { 'attr': {'class': 'col-md-12'} }) }}{{ form_errors(formCreation.raceAnimal) }}</td>
 						<td class="col-md-2">
 							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_animal_ajouter') }}" title="Enregistrer nouvel animal">
 								<i class="fa fa-save"></i>
@@ -92,7 +92,7 @@
 								{# <td>{{ form_widget(formModification.race) }} {{ form_errors(formModification.race) }}</td> #}
 								<td>{{ form_widget(formModification.dateNaissance, { 'attr': {'class': 'col-md-12'} }) }}
 									{{ form_errors(formModification.dateNaissance) }}</td>
-								<td>{{ form_widget(formModification.raceAnimal, { 'attr': {'class': 'col-md-6'} }) }}
+								<td>{{ form_widget(formModification.raceAnimal, { 'attr': {'class': 'col-md-12'} }) }}
 									{{ form_errors(formModification.raceAnimal) }}</td>
 								<td class="col-md-4">
 									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_animal_modifier', {'id' : animal.id }) }}" title="Enregistrer">
@@ -101,9 +101,12 @@
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
-									<button class="btn btn-warning btn-sm" type="button" title="Annuler" onclick="window.location.href='{{ path('app_animal') }}'">
-										<i class="fa fa-undo"></i>
-										Annuler</button>
+									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
+										<a href="{{ path('app_animal') }}">
+											<i class="fa fa-undo"></i>
+											Annuler
+										</a>
+									</button>
 								</td>
 								{# Ceci va générer le champ CSRF #}
 								{{ form_rest(formModification) }}
