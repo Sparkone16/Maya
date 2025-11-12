@@ -90,8 +90,9 @@ final class ProduitController extends AbstractController
     }
 
     #[Route('/produit/ajouter', name: 'app_produit_ajouter', methods: ['POST', 'GET'])]
-    public function ajouter(Produit $produit, Request $request, EntityManagerInterface $entityManager): Response
+    public function ajouter(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
