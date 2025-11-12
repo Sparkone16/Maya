@@ -25,8 +25,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $unPasswordHasher, 
-    GoogleAuthenticatorInterface $googleAuthenticatorInterface): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $unPasswordHasher, GoogleAuthenticatorInterface $googleAuthenticatorInterface): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -38,7 +37,6 @@ final class UserController extends AbstractController
             // génération clé secrète pour Google Authenticator
             $secret = $googleAuthenticatorInterface->generateSecret();
             $user->setGoogleAuthenticatorSecret($secret);
-
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -99,5 +97,12 @@ final class UserController extends AbstractController
         }
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+    }
+    #[Route('/{id}/2fa', name: 'app_user_2fa', methods: ['GET'])]
+    public function user2fa(User $user): Response
+    {
+        return $this->render('user/2fa.html.twig', [
+            'user' => $user,
+        ]);
     }
 }

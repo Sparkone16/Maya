@@ -5,11 +5,19 @@
 
 {% block body %}
 	<div class="col-md-10 contenu-blanc">
-
-		<h1>Les
-			<span>
-				{{  lesClients | length }}
-			</span> clients </h1>
+		<h1>
+			{% if lesClients | length == 0 %}
+			Il n'y a pas de clients
+			{% elseif lesClients | length == 1%}
+				Le client
+			{% else %}
+				Les
+				<span>
+					{{  lesClients | length }}
+				</span> 
+				clients
+			{% endif %}
+		</h1>
 		{{ include('messages.html.twig') }}
 
 		<div class="contenu">
@@ -23,6 +31,7 @@
 						<th>Mail</th>
 						<th>Numéro de téléphone</th>
 						<th>Date d'entrée en relation</th>
+						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -35,7 +44,7 @@
 							{{ form_errors(formCreation.nom) }}</td>
 						<td class="col-md-1">{{ form_widget(formCreation.prenom) }}
 							{{ form_errors(formCreation.prenom) }}</td>
-						<td class="col-md-1">{{ form_widget(formCreation.adresse) }}
+						<td class="col-md-2">{{ form_widget(formCreation.adresse, { 'attr': {'class': 'col-md-12'} }) }}
 							{{ form_errors(formCreation.adresse) }}</td>
 						<td class="col-md-1">{{ form_widget(formCreation.mail) }}
 							{{ form_errors(formCreation.mail) }}</td>
@@ -43,7 +52,7 @@
 							{{ form_errors(formCreation.telephone) }}</td>
 						<td class="col-md-1">{{ form_widget(formCreation.dateEntreeRel) }}
 							{{ form_errors(formCreation.dateEntreeRel) }}</td>
-						<td class="col-md-3">
+						<td class="col-md-2">
 							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_client_ajouter')}}" title="Enregistrer nouveau client">
 								<i class="fa fa-save"></i>
 								Enregistrer</button>
@@ -91,7 +100,7 @@
 									{{ form_errors(formModification.nom) }}</td>
 								<td>{{ form_widget(formModification.prenom) }}
 									{{ form_errors(formModification.prenom) }}</td>
-								<td>{{ form_widget(formModification.adresse) }}
+								<td>{{ form_widget(formModification.adresse, { 'attr': {'class': 'col-md-12'} }) }}
 									{{ form_errors(formModification.adresse) }}</td>
 								<td>{{ form_widget(formModification.mail) }}
 									{{ form_errors(formModification.mail) }}</td>
@@ -106,9 +115,12 @@
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
-									<button class="btn btn-warning btn-sm" type="submit" formaction="{{ path('app_client') }}" title="Annuler">
-										<i class="fa fa-undo"></i>
-										Annuler</button>
+									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
+										<a href="{{ path('app_client') }}">
+											<i class="fa fa-undo"></i>
+											Annuler
+										</a>
+									</button>
 								</td>
 								{# Ceci va générer le champ CSRF #}
 								{{ form_rest(formModification) }}

@@ -3,9 +3,21 @@
 {% block title %}Race Animal{% endblock %}
 
 {% block body %}
-<div class="col-md-10 contenu-blanc">
+<div class="col-md-7 contenu-blanc">
 
-    <h1>Les <span>{{ lesRaces | length }}</span> races animales</h1>
+    <h1>
+            {% if lesRaces | length == 0 %}
+                Il n'y a pas de races
+            {% elseif lesRaces | length == 1%}
+                La race
+            {% else %}
+                Les
+                <span>
+                    {{  lesRaces | length }}
+                </span>
+                races
+            {% endif %}
+        </h1>
 
     {{ include('messages.html.twig') }}
 
@@ -15,6 +27,7 @@
             <tr class="bg-entete">
                 <th>Identifiant</th>
                 <th>Nom</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -22,9 +35,9 @@
             {# Formulaire pour ajouter une nouvelle raceAnimal #}
             <tr>
                 {{ form_start(formCreation)}}
-                <td>Nouveau</td>
-                <td>{{ form_widget(formCreation.intitule) }}{{ form_errors(formCreation.intitule) }}</td>
-                <td>
+                <td class="col-md-1">Nouveau</td>
+                <td>{{ form_widget(formCreation.intitule, {'attr': {'class': 'col-md-4'}}) }}{{ form_errors(formCreation.intitule) }}</td>
+                <td class="col-md-2">
                     <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_ajouter') }}" title="Enregistrer nouvel Race Animal">
                         <i class="fa fa-save"></i> Enregistrer
                     </button>
@@ -58,11 +71,16 @@
                         <!-- formulaire pour modifier une raceAnimal -->
                         {{ form_start(formModification) }}
                         <td>{{ raceAnimal.id }}</td>
-                        <td>{{ form_widget(formModification.intitule) }} {{ form_errors(formModification.intitule) }}</td>
+                        <td>{{ form_widget(formModification.intitule, {'attr': {'class': 'col-md-12'}}) }} {{ form_errors(formModification.intitule) }}</td>
                         <td class="col-md-4">
                             <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_modifier', {'id' : raceAnimal.id }) }}"  title="Enregistrer"><i class="fa fa-save"></i> Enregistrer</button>
                             <button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie"><i class="fa fa-eraser"></i> Effacer</button>
-                            <button class="btn btn-warning btn-sm" type="submit" formaction="{{ path('app_race_animal') }}" title="Annuler"><i class="fa fa-undo"></i> Annuler</button>
+                            <button class="btn btn-warning btn-sm" type="button" title="Annuler">
+								<a href="{{ path('app_race_animal') }}">
+									<i class="fa fa-undo"></i>
+									Annuler
+								</a>
+							</button>
                         </td>
                         {# Ceci va générer le champ CSRF #}
                         {{ form_rest(formModification) }}

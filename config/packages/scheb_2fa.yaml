@@ -7,12 +7,11 @@ scheb_two_factor:
         digits: 6                      # Number of digits in authentication code
         leeway: 0                      # Acceptable time drift in seconds, must be less or equal than 30 seconds
         template: security/2fa_form.html.twig   # Template used to render the authentication form
-
     security_tokens:
         - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
         - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
 
-        # A list of IP addresses or netmasks, which will not trigger two-factor authentication.
+    # A list of IP addresses or netmasks, which will not trigger two-factor authentication.
     # Supports IPv4, IPv6 and IP subnet masks.
     # à décommenter en mode développement pour ne pas passer par l'authentification 2fa
     # ip_whitelist:
@@ -22,4 +21,3 @@ scheb_two_factor:
     # invalidated by the 2FA provider anyhow. Should your 2FA provider allow valid codes for
     # more than that, you should increase this amount!
     code_reuse_cache_duration: 60
-

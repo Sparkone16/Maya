@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block body %}
-	<div class="col-md-10 contenu-blanc">
+	<div class="col-md-9 contenu-blanc">
 
 		<h1>Les
 			<span>
@@ -25,6 +25,7 @@
 						<th>Heure de début</th>
 						<th>Heure de fin</th>
 						<th>Durée</th>
+						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -33,18 +34,18 @@
 					<tr>
 						{{ form_start(formCreation) }}
 						<td class="col-md-1">Nouveau</td>
-						<td class="col-md-1">{{ form_widget(formCreation.titre) }}
+						<td class="col-md-1">{{ form_widget(formCreation.titre, {'attr': {'class': 'col-md-12'}}) }}
 							{{ form_errors(formCreation.titre) }}</td>
-						<td class="col-md-1">{{ form_widget(formCreation.description) }}
+						<td class="col-md-2">{{ form_widget(formCreation.description, {'attr': {'class': 'col-md-12'}}) }}
 							{{ form_errors(formCreation.description) }}</td>
-						<td class="col-md-1">{{ form_widget(formCreation.date) }}
+						<td class="col-md-1">{{ form_widget(formCreation.date, {'attr': {'class': 'col-md-12 text-center'}}) }}
 							{{ form_errors(formCreation.date) }}</td>
-						<td class="col-md-1">{{ form_widget(formCreation.heureDebut) }}
+						<td class="col-md-1">{{ form_widget(formCreation.heureDebut, {'attr': {'class': 'col-md-10 text-center'}}) }}
 							{{ form_errors(formCreation.heureDebut) }}</td>
-						<td class="col-md-1">{{ form_widget(formCreation.heureFin) }}
+						<td class="col-md-1">{{ form_widget(formCreation.heureFin, {'attr': {'class': 'col-md-10 text-center'}}) }}
 							{{ form_errors(formCreation.heureFin) }}</td>
 						<td class="col-md-1"></td>
-						<td class="col-md-3">
+						<td class="col-md-1">
 							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_evenement_ajouter')}}" title="Enregistrer nouveau Evenement">
 								<i class="fa fa-save"></i>
 								Enregistrer</button>
@@ -93,16 +94,17 @@
 								{{ form_start(formModification) }}
 								<td>{{ Evenement.id }}</td>
 
-								<td>{{ form_widget(formModification.titre) }}
+								<td>{{ form_widget(formModification.titre, {'attr': {'class': 'col-md-12'}}) }}
 									{{ form_errors(formModification.titre) }}</td>
-								<td>{{ form_widget(formModification.description) }}
+								<td>{{ form_widget(formModification.description, {'attr': {'class': 'col-md-12'}}) }}
 									{{ form_errors(formModification.description) }}</td>
-								<td>{{ form_widget(formModification.date) }}
+								<td>{{ form_widget(formModification.date, {'attr': {'class': 'col-md-12 text-center'}}) }}
 									{{ form_errors(formModification.date) }}</td>
-								<td>{{ form_widget(formModification.heureDebut) }}
+								<td>{{ form_widget(formModification.heureDebut, {'attr': {'class': 'col-md-10 text-center'}}) }}
 									{{ form_errors(formModification.heureDebut) }}</td>
-								<td>{{ form_widget(formModification.heureFin) }}
+								<td>{{ form_widget(formModification.heureFin, {'attr': {'class': 'col-md-10 text-center'}}) }}
 									{{ form_errors(formModification.heureFin) }}</td>
+								<td></td>
 								<td class="col-md-4">
 									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_evenement_modifier', {'id' : Evenement.id }) }}" title="Enregistrer">
 										<i class="fa fa-save"></i>
@@ -110,9 +112,12 @@
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
-									<button class="btn btn-warning btn-sm" type="submit" formaction="{{ path('app_evenement') }}" title="Annuler">
-										<i class="fa fa-undo"></i>
-										Annuler</button>
+									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
+										<a href="{{ path('app_evenement') }}">
+											<i class="fa fa-undo"></i>
+											Annuler
+										</a>
+									</button>
 								</td>
 								{# Ceci va générer le champ CSRF #}
 								{{ form_rest(formModification) }}
