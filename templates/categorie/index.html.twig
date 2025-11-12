@@ -101,6 +101,15 @@
 			</table>
 		</div>
 		<!--fin div contenu-->
+		<div class="card-columns">
+			{% for key, categorie in lesCategories %}
+				<div class="card bg-{{ categorie.couleur }}">
+					<div class="card-body text-center">
+						{{ categorie.libelle }}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
 	</div>
 	<!--fin div col-md-6-->
 {% endblock %}
