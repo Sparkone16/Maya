@@ -1,20 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello RecetteController!{% endblock %}
+{% block title %}Recette{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div class="col-md-10  contenu-blanc shadow-lg">
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/wamp64/www/Maya3/src/Controller/RecetteController.php</code></li>
-        <li>Your template at <code>C:/wamp64/www/Maya3/templates/recette/index.html.twig</code></li>
-    </ul>
-</div>
+        <h1>Les recettes</h1>
+        {{ include('messages.html.twig') }}
+        <div class="container-fluid contenu">
+
+            <table class="table table-striped table-advance table-hover">
+                <thead>
+                <tr class="bg-entete">
+                    <th class="col-md-1">Identifiant</th>
+                    <th class="col-md-1">Nom</th>
+                    <th class="col-md-1">Produits</th>
+                    <th class="col-md-2">Actions<span class="pull-right" ><a href="{{ path('app_recette_ajouter')}}" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> Ajouter nouveau recette</a></span></th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for key, recette in lesRecettes %}
+                    <tr>
+                        <td>{{ recette.id }}</td>
+                        <td>{{ recette.nom }}</td>
+                        <td>{% for key, produit in recette.produits %}
+                            {{ produit.getLibelle() }},
+                        {% endfor %}</td>
+                        <td>
+
+                        <!-- formulaire pour demander la modification ou la suppression -->
+                            <form>
+                                <button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_recette_modifier', {'id' : recette.id }) }}" title="Modifier"><i class="fa fa-pencil"></i> Modifier</button>
+                                <button type="submit" class="btn btn-danger btn-sm"  formaction="{{ path('app_recette_supprimer', {'id' : recette.id }) }}"  title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer ce recette ?');"><i class="fa fa-trash-o "></i> Supprimer</button>
+                                <input type = "hidden" name="_token" value="{{ csrf_token('action-item' ~ recette.id) }}">  {#  ~     pour concaténer des chaines en twig #}
+                            </form>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {# display navigation #}
+            <div class="navigation">
+                {{ knp_pagination_render(lesRecettes) }}
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

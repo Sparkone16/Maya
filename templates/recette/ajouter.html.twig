@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recette{% endblock %}
+
+{% block body %}
+    <div class="container contenu-blanc">
+        <h1>Créer une nouvelle recette</h1>
+        {{ include('recette/_recette.html.twig', {form: form, button: 'Enregistrer'}) }}
+    </div>
+{% endblock %}
