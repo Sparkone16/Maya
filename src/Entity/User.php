@@ -67,26 +67,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this;
     }
 
-    public function isGoogleAuthenticatorEnabled(): bool
-    {
-        return null !== $this->googleAuthenticatorSecret;
-    }
-
-    public function getGoogleAuthenticatorUsername(): string
-    {
-        return $this->email;
-    }
-
-    public function getGoogleAuthenticatorSecret(): ?string
-    {
-        return $this->googleAuthenticatorSecret;
-    }
-
-    public function setGoogleAuthenticatorSecret(?string $googleAuthenticatorSecret): void
-    {
-        $this->googleAuthenticatorSecret = $googleAuthenticatorSecret;
-    }
-
 
     /**
      * A visual identifier that represents this user.
