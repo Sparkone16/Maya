@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\ProduitRecherche;
 use App\Form\ProduitRechercheType;   
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 
 
@@ -20,7 +21,7 @@ final class ProduitController extends AbstractController
 {
 
     #[Route('/produit', name: 'app_produit', methods: ['GET'])]
-    public function index(Request $request, ProduitRepository $repository, SessionInterface $session): Response
+    public function index(Request $request, ProduitRepository $repository, SessionInterface $session, PaginatorInterface $paginator): Response
     {
         // créer l'objet et le formulaire de recherche
         $produitRecherche = new ProduitRecherche();
@@ -33,23 +34,39 @@ final class ProduitController extends AbstractController
         $formRecherche->handleRequest($request);
         if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
             $produitRecherche = $formRecherche->getData();
-            // cherche les produits correspondant aux critères, triés par libellé
-            // requête construite dynamiquement alors il est plus simple d'utiliser le querybuilder
-            $lesProduits = $repository->findAllByCriteria($produitRecherche);
             // mémoriser les critères de sélection dans une variable de session
             $session->set('ProduitCriteres', $produitRecherche);
+            // cherche les produits correspondant aux critères, triés par libellé
+            // requête construite dynamiquement alors il est plus simple d'utiliser le querybuilder
+            $lesProduits = $paginator->paginate(
+                $repository->findAllByCriteria($produitRecherche),
+                $request->query->getint('page', 1),
+                5
+            );
+
 
         } else {
             // lire les produits
             if ($session->has("ProduitCriteres")) {
                 // récupérer les critères en session
                 $produitRecherche = $session->get("ProduitCriteres");
-                $lesProduits = $repository->findAllByCriteria($produitRecherche);
+                $lesProduits = $paginator->paginate(
+                    $repository->findAllByCriteria($produitRecherche),
+                    $request->query->getint('page', 1),
+                    5
+                );
+
                 $formRecherche = $this->createForm(ProduitRechercheType::class, $produitRecherche);
                 // injecter les critères en session dans le formulaire de recherche
                 $formRecherche->setData($produitRecherche);
             } else {
-                $lesProduits = $repository->findAllOrderByLibelle();
+                $prodRech = new ProduitRecherche();
+                $lesProduits = $paginator->paginate(
+                    $repository->findAllOrderByLibelle($prodRech),
+                    $request->query->getint('page', 1),
+                    5
+                );
+
             }
 
         }

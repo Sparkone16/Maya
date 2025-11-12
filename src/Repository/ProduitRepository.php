@@ -6,6 +6,9 @@ use App\Entity\Produit;
 use App\Entity\ProduitRecherche;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
+
 
 /**
  * @extends ServiceEntityRepository<Produit>
@@ -17,9 +20,9 @@ class ProduitRepository extends ServiceEntityRepository
         parent::__construct($registry, Produit::class);
     }
     /**
-     * @return Produit[]
+     * @return Query
      */
-    public function findAllByCriteria(ProduitRecherche $produitRecherche): Array
+    public function findAllByCriteria(ProduitRecherche $produitRecherche): Query
     {
         // le "p" est un alias utilisé dans la requête
         $qb = $this->createQueryBuilder('p')
@@ -40,14 +43,13 @@ class ProduitRepository extends ServiceEntityRepository
                 ->setParameter('prixMaxi', $produitRecherche->getPrixMaxi());
         }
 
-        $query = $qb->getQuery();
-        return $query->execute();
+        return $qb->getQuery();
     }
 
     /**
-    * @return Produit[]
+    * @return Query
     */
-   public function findAllOrderByLibelle(): array
+   public function findAllOrderByLibelle(): Query
    {
        $entityManager = $this->getEntityManager();
        $query = $entityManager->createQuery(
@@ -57,7 +59,7 @@ class ProduitRepository extends ServiceEntityRepository
        );
 
        // retourne un tableau d'objets de type Produit
-       return $query->getResult();
+       return $query;
    }
 
 

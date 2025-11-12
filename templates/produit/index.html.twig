@@ -76,7 +76,10 @@
                 {% endfor %}
                 </tbody>
             </table>
-
+            {# display navigation #}
+            <div class="navigation">
+                {{ knp_pagination_render(lesProduits) }}
+            </div>
         </div>
     </div>
 
