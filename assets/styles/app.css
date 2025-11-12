@@ -32,6 +32,25 @@
   color: #689f38;
 }
 
+/* espacer les numéros de page (pagination)
+   - on utilise display:flex / gap pour être robuste face aux styles bootstrap
+   - on cible .pagination (généré par knp_pagination) et les liens .page-link */
+.pagination {
+  display: inline-flex; /* place les éléments sur une ligne et permet gap */
+  gap: 8px;             /* espace horizontal entre éléments */
+  align-items: center;
+  padding-left: 0;      /* éviter le padding de list-style par défaut */
+  list-style: none;
+}
+.pagination .page-item {
+  display: inline-block; /* backup si besoin */
+  margin: 0;             /* gap gère l'espacement, annule margin éventuel */
+}
+.pagination .page-item .page-link {
+  /* petit padding pour garder un toucher confortable */
+  padding: .375rem .6rem;
+}
+
 
 /* personnalisation html */
 body {
