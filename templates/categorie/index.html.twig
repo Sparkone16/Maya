@@ -34,9 +34,9 @@
 					<tr>
 						{{ form_start(formCreation) }}
 						<td class="col-md-1">Nouveau</td>
-						<td class="col-md-6">{{ form_widget(formCreation.libelle, {'attr': {'class': 'col-md-12'}}) }}
+						<td class="col-md-3">{{ form_widget(formCreation.libelle, {'attr': {'class': 'col-md-12'}}) }}
 							{{ form_errors(formCreation.libelle) }}</td>
-						<td class="col-md-3">
+						<td class="col-md-2">
 							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_categorie_ajouter') }}" title="Enregistrer nouvelle catégorie">
 								<i class="fa fa-save"></i>
 								Enregistrer</button>

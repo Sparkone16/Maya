@@ -40,10 +40,10 @@
 					<tr>
 						{{ form_start(formCreation)}}
 						<td class="col-md-1">Nouveau</td>
-						<td class="col-md-3">{{ form_widget(formCreation.nom, { 'attr': {'class': 'col-md-12'} }) }}{{ form_errors(formCreation.nom) }}</td>
+						<td class="col-md-2">{{ form_widget(formCreation.nom, { 'attr': {'class': 'col-md-12'} }) }}{{ form_errors(formCreation.nom) }}</td>
 						{#<td>{{ form_widget(formCreation.race) }}{{ form_errors(formCreation.race) }}</td> #}
 						<td class="col-md-1">{{ form_widget(formCreation.dateNaissance, { 'attr': {'class': 'col-md-12'} }) }}{{ form_errors(formCreation.dateNaissance) }}</td>
-						<td class="col-md-3">{{ form_widget(formCreation.raceAnimal, { 'attr': {'class': 'col-md-6'} }) }}{{ form_errors(formCreation.raceAnimal) }}</td>
+						<td class="col-md-2">{{ form_widget(formCreation.raceAnimal, { 'attr': {'class': 'col-md-6'} }) }}{{ form_errors(formCreation.raceAnimal) }}</td>
 						<td class="col-md-2">
 							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_animal_ajouter') }}" title="Enregistrer nouvel animal">
 								<i class="fa fa-save"></i>
