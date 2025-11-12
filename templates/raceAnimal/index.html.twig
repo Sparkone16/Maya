@@ -75,9 +75,12 @@
                         <td class="col-md-4">
                             <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_modifier', {'id' : raceAnimal.id }) }}"  title="Enregistrer"><i class="fa fa-save"></i> Enregistrer</button>
                             <button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie"><i class="fa fa-eraser"></i> Effacer</button>
-                            <button class="btn btn-warning btn-sm" type="button" title="Annuler" onclick="window.location.href='{{ path('app_race_animal') }}'">
-										<i class="fa fa-undo"></i>
-										Annuler</button>
+                            <button class="btn btn-warning btn-sm" type="button" title="Annuler">
+								<a href="{{ path('app_race_animal') }}">
+									<i class="fa fa-undo"></i>
+									Annuler
+								</a>
+							</button>
                         </td>
                         {# Ceci va générer le champ CSRF #}
                         {{ form_rest(formModification) }}

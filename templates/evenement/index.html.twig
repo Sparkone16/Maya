@@ -112,9 +112,12 @@
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
-									<button class="btn btn-warning btn-sm" type="button" title="Annuler" onclick="window.location.href='{{ path('app_evenement') }}'">
-										<i class="fa fa-undo"></i>
-										Annuler</button>
+									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
+										<a href="{{ path('app_evenement') }}">
+											<i class="fa fa-undo"></i>
+											Annuler
+										</a>
+									</button>
 								</td>
 								{# Ceci va générer le champ CSRF #}
 								{{ form_rest(formModification) }}
