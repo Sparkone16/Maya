@@ -10,6 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 
 final class CategorieController extends AbstractController
@@ -17,13 +20,24 @@ final class CategorieController extends AbstractController
     #[Route('/categorie', name: 'app_categorie', methods: ['GET'])]
     public function index(CategorieRepository $repository): Response
     {
+        // lire les catégories
+        $lesCategories = $repository->findAll();
+        return $this->render('categorie/index.html.twig', [
+            'lesCategories' => $lesCategories,
+        ]);
+    }
+
+
+    #[Route('/categorie/admin', name: 'app_categorie_admin', methods: ['GET'])]
+    public function indexAdmin(CategorieRepository $repository): Response
+    {
         // créer l'objet et le formulaire de création
         $categorie = new Categorie();
         $formCreation = $this->createForm(CategorieType::class, $categorie);
 
         // lire les catégories
         $lesCategories = $repository->findAll();
-        return $this->render('categorie/index.html.twig', [
+        return $this->render('categorie/indexAdmin.html.twig', [
             'formCreation' => $formCreation->createView(),
             'lesCategories' => $lesCategories,
             'idCategorieModif' => null,
@@ -32,8 +46,8 @@ final class CategorieController extends AbstractController
     }
 
 
-    #[Route('/categorie/ajouter', name: 'app_categorie_ajouter', methods: ['POST'])]
-    public function ajouter(Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository): Response
+    #[Route('/categorie/admin/ajouter', name: 'app_categorie_ajouter', methods: ['POST'])]
+    public function ajouter(Request $request, SluggerInterface $slugger, EntityManagerInterface $entityManager, CategorieRepository $repository, #[Autowire('%kernel.project_dir%/public/uploads/categorieIMG')] string $imgsDirectory): Response
 
     {
         //  $categorie objet de la classe Categorie, il contiendra les valeurs saisies dans les champs après soumission du formulaire.
@@ -50,6 +64,25 @@ final class CategorieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
+
+            $imgFile = $form->get('img')->getData();
+            if ($imgFile) {
+                $originalFilename = pathinfo($imgFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imgFile->guessExtension();
+
+                // Move the file to the directory where brochures are stored
+                try {
+                    $imgFile->move($imgsDirectory, $newFilename);
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                // updates the 'brochureFilename' property to store the PDF file name
+                // instead of its contents
+                $categorie->setImgFilename($newFilename);
+            }
             // c'est le cas du retour du formulaire
             //         l'objet $categorie a été automatiquement "hydraté" par Doctrine
             // dire à Doctrine que l'objet sera (éventuellement) persisté
@@ -62,13 +95,13 @@ final class CategorieController extends AbstractController
                 'La catégorie ' . $categorie->getLibelle() . ' a été ajoutée.'
             );
             // rediriger vers l'affichage des catégories qui comprend le formulaire pour l"ajout d'une nouvelle catégorie
-            return $this->redirectToRoute('app_categorie');
+            return $this->redirectToRoute('app_categorie_admin');
         } else {
             // affichage de la liste des catégories avec le formulaire de création et ses erreurs
             // lire les catégories
             $lesCategories = $repository->findAll();
             // rendre la vue
-            return $this->render('categorie/index.html.twig', [
+            return $this->render('categorie/indexAdmin.html.twig', [
                 'formCreation' => $form->createView(),
                 'lesCategories' => $lesCategories,
                 'formModification' => null,
@@ -77,7 +110,7 @@ final class CategorieController extends AbstractController
         }
     }
 
-    #[Route('/categorie/demandermodification/{id<\d+>}', name: 'app_categorie_demandermodification', methods: ['GET'])]
+    #[Route('/categorie/admin/demandermodification/{id<\d+>}', name: 'app_categorie_demandermodification', methods: ['GET'])]
     public function demanderModification(CategorieRepository $repository, Categorie $categorieModif, Request $request): Response
     {
         if ($this->isCsrfTokenValid('action-item' . $categorieModif->getId(), $request->get('_token'))) {
@@ -90,19 +123,19 @@ final class CategorieController extends AbstractController
 
             // lire les catégories
             $lesCategories = $repository->findAll();
-            return $this->render('categorie/index.html.twig', [
+            return $this->render('categorie/indexAdmin.html.twig', [
                 'formCreation' => $formCreation->createView(),
                 'lesCategories' => $lesCategories,
                 'formModification' => $formModificationView,
                 'idCategorieModif' => $categorieModif->getId(),
             ]);
         }
-        return $this->redirectToRoute('app_categorie');
+        return $this->redirectToRoute('app_categorie_admin');
 
     }
 
-    #[Route('/categorie/modifier/{id<\d+>}', name: 'app_categorie_modifier', methods: ['POST'])]
-    public function modifier(Categorie $categorie, Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository): Response
+    #[Route('/categorie/admin/modifier/{id<\d+>}', name: 'app_categorie_modifier', methods: ['POST'])]
+    public function modifier(Categorie $categorie, SluggerInterface $slugger, Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository, #[Autowire('%kernel.project_dir%/public/uploads/categorieIMG')] string $imgsDirectory): Response
     // public function modifier(Categorie $categorie = null, $id = null, Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository)
     {
         //  Symfony 4 est capable de retrouver la catégorie à l'aide de Doctrine ORM directement en utilisant l'id passé dans la route
@@ -111,6 +144,24 @@ final class CategorieController extends AbstractController
         if ($form->isSubmitted()) {
             // if ($form->isSubmitted() && $form->isValid()) {
             // va effectuer la requête d'UPDATE en base de données
+            $imgFile = $form->get('img')->getData();
+            if ($imgFile) {
+                $originalFilename = pathinfo($imgFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imgFile->guessExtension();
+
+                // Move the file to the directory where brochures are stored
+                try {
+                    $imgFile->move($imgsDirectory, $newFilename);
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                // updates the 'brochureFilename' property to store the PDF file name
+                // instead of its contents
+                $categorie->setImgFilename($newFilename);
+            }
             // pas besoin de "persister" l'entité car l'objet a déjà été retrouvé à partir de Doctrine ORM.
             $entityManager->flush();
             $this->addFlash(
@@ -118,7 +169,7 @@ final class CategorieController extends AbstractController
                 'La catégorie ' . $categorie->getLibelle() . ' a été modifiée.'
             );
             // rediriger vers l'affichage des catégories qui comprend le formulaire pour l"ajout d'une nouvelle catégorie
-            return $this->redirectToRoute('app_categorie');
+            return $this->redirectToRoute('app_categorie_admin');
         } else {
             // affichage de la liste des catégories avec le formulaire de modification et ses erreurs
             // créer l'objet et le formulaire de création
@@ -127,7 +178,7 @@ final class CategorieController extends AbstractController
             // lire les catégories
             $lesCategories = $repository->findAll();
             // rendre la vue
-            return $this->render('categorie/index.html.twig', [
+            return $this->render('categorie/indexAdmin.html.twig', [
                 'formCreation' => $formCreation->createView(),
                 'lesCategories' => $lesCategories,
                 'formModification' => $form->createView(),
@@ -137,7 +188,7 @@ final class CategorieController extends AbstractController
     }
 
 
-    #[Route('/categorie/supprimer/{id<\d+>}', name: 'app_categorie_supprimer')]
+    #[Route('/categorie/admin/supprimer/{id<\d+>}', name: 'app_categorie_supprimer')]
     public function supprimer(Categorie $categorie, Request $request, EntityManagerInterface $entityManager)
     {
         // vérifier le token
@@ -157,6 +208,6 @@ final class CategorieController extends AbstractController
                 'La catégorie ' . $categorie->getLibelle() . ' a été supprimée.'
             );
         }
-        return $this->redirectToRoute('app_categorie');
+        return $this->redirectToRoute('app_categorie_admin');
     }
 }

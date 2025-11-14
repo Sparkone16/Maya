@@ -33,8 +33,8 @@ class Categorie
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorie')]
     private Collection $produits;
 
-    #[ORM\Column(length: 20, nullable: true)]
-    private ?string $couleur = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imgFilename = null;
 
     public function __construct()
     {
@@ -88,14 +88,14 @@ class Categorie
         return $this;
     }
 
-    public function getCouleur(): ?string
+    public function getImgFilename(): ?string
     {
-        return $this->couleur;
+        return $this->imgFilename;
     }
 
-    public function setCouleur(?string $couleur): static
+    public function setImgFilename(?string $imgFilename): static
     {
-        $this->couleur = $couleur;
+        $this->imgFilename = $imgFilename;
 
         return $this;
     }
