@@ -11,14 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\FournisseurRecherche;
-use App\Form\FournisseurRechercheType;   
+use App\Form\FournisseurRechercheType;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
 final class FournisseurController extends AbstractController
 {
     #[Route('/fournisseur', name: 'app_fournisseur', methods: ['GET'])]
-    public function index(Request $request, FournisseurRepository $repository, SessionInterface $session,PaginatorInterface $paginator): Response
+    public function index(Request $request, FournisseurRepository $repository, SessionInterface $session, PaginatorInterface $paginator): Response
     {
         // créer l'objet et le formulaire de recherche
         $fournisseurRecherche = new FournisseurRecherche();
@@ -86,8 +86,8 @@ final class FournisseurController extends AbstractController
         return $this->redirectToRoute('app_fournisseur');
     }
 
-    #[Route('/fournisseur/ajouter', name: 'app_fournisseur_ajouter', methods: ['POST'])]
-    public function ajouter(Request $request, EntityManagerInterface $entityManager, FournisseurRepository $repository): Response
+    #[Route('/fournisseur/ajouter', name: 'app_fournisseur_ajouter', methods: ['GET', 'POST'])]
+    public function ajouter(Request $request, EntityManagerInterface $entityManager, FournisseurRepository $repository, PaginatorInterface $paginator): Response
 
     {
         //  $fournisseur objet de la classe Fournisseur, il contiendra les valeurs saisies dans les champs après soumission du formulaire.
@@ -97,13 +97,15 @@ final class FournisseurController extends AbstractController
         // création d'un formulaire de type FournisseurType
         $fournisseur = new Fournisseur();
         $form = $this->createForm(FournisseurType::class, $fournisseur);
+        
 
         // handleRequest met à jour le formulaire
         //  si le formulaire a été soumis, handleRequest renseigne les propriétés
         //      avec les données saisies par l'utilisateur et retournées par la soumission du formulaire
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() ) {
+        // if ($form->isSubmitted() && $form->isValid()) {
             // c'est le cas du retour du formulaire
             //         l'objet $fournisseur a été automatiquement "hydraté" par Doctrine
             // dire à Doctrine que l'objet sera (éventuellement) persisté
@@ -120,13 +122,26 @@ final class FournisseurController extends AbstractController
         } else {
             // affichage de la liste des catégories avec le formulaire de création et ses erreurs
             // lire les catégories
-            $lesFournisseurs = $repository->findAll();
+         $lesFournisseurs = $paginator->paginate(
+                $repository->findAll(),
+                 $request->query->getint('page', 1),
+                5
+            );
+            // créer l'objet et le formulaire de recherche
+            $fournisseurRecherche = new FournisseurRecherche();
+            // form en GET : Symfony lira les paramètres depuis $request->query
+            $formRecherche = $this->createForm(FournisseurRechercheType::class, $fournisseurRecherche, [
+                'method' => 'GET',
+                // optionnel : désactiver CSRF pour formulaires GET 
+                // 'csrf_protection' => false,
+            ]);
             // rendre la vue
             return $this->render('fournisseur/index.html.twig', [
-                'formCreation' => $form->createView(),
+                'formCreation' => $form,
                 'lesFournisseurs' => $lesFournisseurs,
                 'formModification' => null,
                 'idFournisseurModif' => null,
+                'formRecherche' => $formRecherche,
             ]);
         }
     }
@@ -152,7 +167,6 @@ final class FournisseurController extends AbstractController
             ]);
         }
         return $this->redirectToRoute('app_fournisseur');
-
     }
 
     #[Route('/fournisseur/modifier/{id<\d+>}', name: 'app_fournisseur_modifier', methods: ['POST'])]
