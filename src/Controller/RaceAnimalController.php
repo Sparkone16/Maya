@@ -10,16 +10,24 @@ use App\Entity\RaceAnimal;
 use App\Form\RaceAnimalType;
 use App\Repository\RaceAnimalRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 final class RaceAnimalController extends AbstractController
 {
     #[Route('/race-animal', name: 'app_race_animal', methods: ['GET'])]
-    public function index(RaceAnimalRepository $repository): Response
+    public function index(Request $request, RaceAnimalRepository $repository, PaginatorInterface $paginator): Response
     {
         $raceAnimal = new RaceAnimal();
         $formCreation = $this->createForm(RaceAnimalType::class, $raceAnimal);
+        
+        
+        // Pagination
+        $lesRaces = $paginator->paginate(
+            $repository->findAll(),
+            $request->query->getint('page', 1),
+            5
+        );
         // lire les races
-        $lesRaces = $repository->findAll();
         return $this->render('raceAnimal/index.html.twig', [
             'formCreation' => $formCreation->createView(),
             'lesRaces' => $lesRaces,

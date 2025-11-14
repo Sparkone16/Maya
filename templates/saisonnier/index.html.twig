@@ -7,18 +7,18 @@
 	<div class="col-md-11 contenu-blanc">
 
 		<h1>
-            {% if lesSaisonniers | length == 0 %}
-                Il n'y a pas de saisonnier
-            {% elseif lesSaisonniers | length == 1%}
-                Le saisonnier
-            {% else %}
-                Les
-                <span>
-                    {{  lesSaisonniers | length }}
-                </span>
-                saisonniers
-            {% endif %}
-        </h1>
+			{% if lesSaisonniers | length == 0 %}
+				Il n'y a pas de saisonnier
+			{% elseif lesSaisonniers | length == 1%}
+				Le saisonnier
+			{% else %}
+				Les
+				<span>
+					{{  lesSaisonniers | length }}
+				</span>
+				saisonniers
+			{% endif %}
+		</h1>
 		{{ include('messages.html.twig') }}
 		<div class="contenu">
 			<table class="table table-striped table-advance table-hover">
@@ -29,7 +29,7 @@
 						<th>Prénom</th>
 						<th>Téléphone</th>
 						<th>Mail</th>
-                        <th>Adresse</th>
+						<th>Adresse</th>
 						<th>Date de naissance</th>
 						<th>Date de début</th>
 						<th>Salaire horaire</th>
@@ -49,13 +49,13 @@
 							{{ form_errors(formCreation.telephone) }}</td>
 						<td class="col-md-1">{{ form_widget(formCreation.mail, {'attr': {'class': 'col-md-12'}}) }}
 							{{ form_errors(formCreation.mail) }}</td>
-                        <td class="col-md-1">{{ form_widget(formCreation.adresse) }}
+						<td class="col-md-1">{{ form_widget(formCreation.adresse) }}
 							{{ form_errors(formCreation.adresse) }}</td>
 						<td class="col-md-1">{{ form_widget(formCreation.dateNaissance, {'attr': {'class': 'col-md-12 text-center'}}) }}
 							{{ form_errors(formCreation.dateNaissance) }}</td>
 						<td class="col-md-1">{{ form_widget(formCreation.dateDebut, {'attr': {'class': 'col-md-12 text-center'}}) }}
 							{{ form_errors(formCreation.dateDebut) }}</td>
-                        <td class="col-md-1">{{ form_widget(formCreation.salaireHoraire) }}
+						<td class="col-md-1">{{ form_widget(formCreation.salaireHoraire) }}
 							{{ form_errors(formCreation.salaireHoraire) }}</td>
 						<td class="col-md-2">
 							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_saisonnier_ajouter') }}" title="Enregistrer nouveau saisonnier">
@@ -79,10 +79,10 @@
 								<td>{{ saisonnier.prenom }}</td>
 								<td>{{ saisonnier.telephone }}</td>
 								<td>{{ saisonnier.mail }}</td>
-                                <td>{{ saisonnier.adresse }}</td>
-                                <td>{{ saisonnier.dateNaissance|date('d/m/Y') }}</td>
-                                <td>{{ saisonnier.dateDebut|date('d/m/Y') }}</td>
-                                <td>{{ saisonnier.salaireHoraire }}</td>
+								<td>{{ saisonnier.adresse }}</td>
+								<td>{{ saisonnier.dateNaissance|date('d/m/Y') }}</td>
+								<td>{{ saisonnier.dateDebut|date('d/m/Y') }}</td>
+								<td>{{ saisonnier.salaireHoraire }}</td>
 								<!-- formulaire pour demander la modification ou la suppression -->
 								<td>
 									<form>
@@ -109,13 +109,13 @@
 									{{ form_errors(formModification.telephone) }}</td>
 								<td>{{ form_widget(formModification.mail, {'attr': {'class': 'col-md-12'}}) }}
 									{{ form_errors(formModification.mail) }}</td>
-                                <td>{{ form_widget(formModification.adresse) }}
+								<td>{{ form_widget(formModification.adresse) }}
 									{{ form_errors(formModification.adresse) }}</td>
-                                <td>{{ form_widget(formModification.dateNaissance, {'attr': {'class': 'col-md-12 text-center'}}) }}
+								<td>{{ form_widget(formModification.dateNaissance, {'attr': {'class': 'col-md-12 text-center'}}) }}
 									{{ form_errors(formModification.dateNaissance) }}</td>
-                                <td>{{ form_widget(formModification.dateDebut, {'attr': {'class': 'col-md-12 text-center'}}) }}
+								<td>{{ form_widget(formModification.dateDebut, {'attr': {'class': 'col-md-12 text-center'}}) }}
 									{{ form_errors(formModification.dateDebut) }}</td>
-                                <td>{{ form_widget(formModification.salaireHoraire) }}
+								<td>{{ form_widget(formModification.salaireHoraire) }}
 									{{ form_errors(formModification.salaireHoraire) }}</td>
 								<td class="col-md-4">
 									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_saisonnier_modifier', {'id' : saisonnier.id }) }}" title="Enregistrer">
@@ -141,8 +141,11 @@
 
 				</tbody>
 			</table>
+			{# display navigation #}
+			<div class="navigation">
+				{{ knp_pagination_render(lesSaisonniers) }}
+			</div>
+			<!--fin div contenu-->
 		</div>
-		<!--fin div contenu-->
-	</div>
-	<!--fin div col-md-6-->
-{% endblock %}
+		<!--fin div col-md-6-->
+	{% endblock %}

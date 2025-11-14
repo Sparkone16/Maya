@@ -10,19 +10,25 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 
 final class SaisonnierController extends AbstractController
 {
     #[Route('/saisonnier', name: 'app_saisonnier', methods: ['GET'])]
-    public function index(SaisonnierRepository $repository): Response
+    public function index(Request $request, SaisonnierRepository $repository, PaginatorInterface $paginator): Response
     {
         // créer l'objet et le formulaire de création
         $saisonnier = new Saisonnier();
         $formCreation = $this->createForm(SaisonnierType::class, $saisonnier);
 
+        // Pagination
+        $lesSaisonniers = $paginator->paginate(
+            $repository->findAll(),
+            $request->query->getint('page', 1),
+            5
+        );
         // lire les saisonniers
-        $lesSaisonniers = $repository->findAll();
         return $this->render('saisonnier/index.html.twig', [
             'formCreation' => $formCreation->createView(),
             'lesSaisonniers' => $lesSaisonniers,

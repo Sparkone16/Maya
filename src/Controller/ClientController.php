@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 
+
 final class ClientController extends AbstractController
 {
     #[Route('/client', name: 'app_client', methods: ['GET'])]
