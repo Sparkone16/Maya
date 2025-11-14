@@ -10,24 +10,80 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\FournisseurRecherche;
+use App\Form\FournisseurRechercheType;   
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 final class FournisseurController extends AbstractController
 {
-    #[Route('/fournisseur', name: 'app_fournisseur')]
-    public function index(FournisseurRepository $repository): Response
+    #[Route('/fournisseur', name: 'app_fournisseur', methods: ['GET'])]
+    public function index(Request $request, FournisseurRepository $repository, SessionInterface $session,PaginatorInterface $paginator): Response
     {
-        // créer l'objet et le formulaire de création
+        // créer l'objet et le formulaire de recherche
+        $fournisseurRecherche = new FournisseurRecherche();
+        // form en GET : Symfony lira les paramètres depuis $request->query
+        $formRecherche = $this->createForm(FournisseurRechercheType::class, $fournisseurRecherche, [
+            'method' => 'GET',
+            // optionnel : désactiver CSRF pour formulaires GET 
+            // 'csrf_protection' => false,
+        ]);
+        $formRecherche->handleRequest($request);
+        if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
+            $fournisseurRecherche = $formRecherche->getData();
+            // mémoriser les critères de sélection dans une variable de session
+            $session->set('FournisseurCriteres', $fournisseurRecherche);
+            // cherche les fournisseurs correspondant aux critères, triés par libellé
+            // requête construite dynamiquement alors il est plus simple d'utiliser le querybuilder
+            $lesFournisseurs = $paginator->paginate(
+                $repository->findAllByCriteria($fournisseurRecherche),
+                $request->query->getint('page', 1),
+                5
+            );
+        } else {
+            // lire les fournisseurs
+            if ($session->has("FournisseurCriteres")) {
+                // récupérer les critères en session
+                $fournisseurRecherche = $session->get("FournisseurCriteres");
+                $lesFournisseurs = $paginator->paginate(
+                    $repository->findAllByCriteria($fournisseurRecherche),
+                    $request->query->getint('page', 1),
+                    5
+                );
+                $formRecherche = $this->createForm(FournisseurRechercheType::class, $fournisseurRecherche);
+                // injecter les critères en session dans le formulaire de recherche
+                $formRecherche->setData($fournisseurRecherche);
+            } else {
+                $prodRech = new FournisseurRecherche();
+                $lesFournisseurs = $paginator->paginate(
+                    $repository->findAllOrderByLibelle($prodRech),
+                    $request->query->getint('page', 1),
+                    5
+                );
+            }
+        }
         $fournisseur = new Fournisseur();
         $formCreation = $this->createForm(FournisseurType::class, $fournisseur);
 
-        // lire les catégories
-        $lesFournisseurs = $repository->findAll();
         return $this->render('fournisseur/index.html.twig', [
-            'formCreation' => $formCreation->createView(),
+            'formRecherche' => $formRecherche,
             'lesFournisseurs' => $lesFournisseurs,
+            'formCreation' => $formCreation->createView(),
             'idFournisseurModif' => null,
             'formModification' => null,
         ]);
+    }
+
+    #[Route('/fournisseur/reinitialiser', name: 'app_fournisseur_reinitialiser', methods: ['GET'])]
+    public function reinitialiser(Request $request): Response
+    {
+        // supprimer les critères de recherche en session
+        $session = $request->getSession();
+        if ($session->has('FournisseursCriteres')) {
+            $session->remove('FournisseursCriteres');
+        }
+
+        return $this->redirectToRoute('app_fournisseur');
     }
 
     #[Route('/fournisseur/ajouter', name: 'app_fournisseur_ajouter', methods: ['POST'])]
