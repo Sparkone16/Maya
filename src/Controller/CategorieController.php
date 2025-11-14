@@ -20,24 +20,13 @@ final class CategorieController extends AbstractController
     #[Route('/categorie', name: 'app_categorie', methods: ['GET'])]
     public function index(CategorieRepository $repository): Response
     {
-        // lire les catégories
-        $lesCategories = $repository->findAll();
-        return $this->render('categorie/index.html.twig', [
-            'lesCategories' => $lesCategories,
-        ]);
-    }
-
-
-    #[Route('/categorie/admin', name: 'app_categorie_admin', methods: ['GET'])]
-    public function indexAdmin(CategorieRepository $repository): Response
-    {
         // créer l'objet et le formulaire de création
         $categorie = new Categorie();
         $formCreation = $this->createForm(CategorieType::class, $categorie);
 
         // lire les catégories
         $lesCategories = $repository->findAll();
-        return $this->render('categorie/indexAdmin.html.twig', [
+        return $this->render('categorie/index.html.twig', [
             'formCreation' => $formCreation->createView(),
             'lesCategories' => $lesCategories,
             'idCategorieModif' => null,
@@ -46,7 +35,7 @@ final class CategorieController extends AbstractController
     }
 
 
-    #[Route('/categorie/admin/ajouter', name: 'app_categorie_ajouter', methods: ['POST'])]
+    #[Route('/categorie/ajouter', name: 'app_categorie_ajouter', methods: ['POST'])]
     public function ajouter(Request $request, SluggerInterface $slugger, EntityManagerInterface $entityManager, CategorieRepository $repository, #[Autowire('%kernel.project_dir%/public/uploads/categorieIMG')] string $imgsDirectory): Response
 
     {
@@ -95,7 +84,7 @@ final class CategorieController extends AbstractController
                 'La catégorie ' . $categorie->getLibelle() . ' a été ajoutée.'
             );
             // rediriger vers l'affichage des catégories qui comprend le formulaire pour l"ajout d'une nouvelle catégorie
-            return $this->redirectToRoute('app_categorie_admin');
+            return $this->redirectToRoute('app_categorie');
         } else {
             // affichage de la liste des catégories avec le formulaire de création et ses erreurs
             // lire les catégories
@@ -110,7 +99,7 @@ final class CategorieController extends AbstractController
         }
     }
 
-    #[Route('/categorie/admin/demandermodification/{id<\d+>}', name: 'app_categorie_demandermodification', methods: ['GET'])]
+    #[Route('/categorie/demandermodification/{id<\d+>}', name: 'app_categorie_demandermodification', methods: ['GET'])]
     public function demanderModification(CategorieRepository $repository, Categorie $categorieModif, Request $request): Response
     {
         if ($this->isCsrfTokenValid('action-item' . $categorieModif->getId(), $request->get('_token'))) {
@@ -130,11 +119,11 @@ final class CategorieController extends AbstractController
                 'idCategorieModif' => $categorieModif->getId(),
             ]);
         }
-        return $this->redirectToRoute('app_categorie_admin');
+        return $this->redirectToRoute('app_categorie');
 
     }
 
-    #[Route('/categorie/admin/modifier/{id<\d+>}', name: 'app_categorie_modifier', methods: ['POST'])]
+    #[Route('/categorie/modifier/{id<\d+>}', name: 'app_categorie_modifier', methods: ['POST'])]
     public function modifier(Categorie $categorie, SluggerInterface $slugger, Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository, #[Autowire('%kernel.project_dir%/public/uploads/categorieIMG')] string $imgsDirectory): Response
     // public function modifier(Categorie $categorie = null, $id = null, Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository)
     {
@@ -169,7 +158,7 @@ final class CategorieController extends AbstractController
                 'La catégorie ' . $categorie->getLibelle() . ' a été modifiée.'
             );
             // rediriger vers l'affichage des catégories qui comprend le formulaire pour l"ajout d'une nouvelle catégorie
-            return $this->redirectToRoute('app_categorie_admin');
+            return $this->redirectToRoute('app_categorie');
         } else {
             // affichage de la liste des catégories avec le formulaire de modification et ses erreurs
             // créer l'objet et le formulaire de création
@@ -188,7 +177,7 @@ final class CategorieController extends AbstractController
     }
 
 
-    #[Route('/categorie/admin/supprimer/{id<\d+>}', name: 'app_categorie_supprimer')]
+    #[Route('/categorie/supprimer/{id<\d+>}', name: 'app_categorie_supprimer')]
     public function supprimer(Categorie $categorie, Request $request, EntityManagerInterface $entityManager)
     {
         // vérifier le token
@@ -208,6 +197,6 @@ final class CategorieController extends AbstractController
                 'La catégorie ' . $categorie->getLibelle() . ' a été supprimée.'
             );
         }
-        return $this->redirectToRoute('app_categorie_admin');
+        return $this->redirectToRoute('app_categorie');
     }
 }

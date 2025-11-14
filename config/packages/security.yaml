@@ -82,7 +82,7 @@ security:
 
         #  Un administrateur a accès à la gestion des catégories
         # correspond à /categorie/* sauf si la règle précédente s'applique
-        - { path: '^/categorie/admin', roles: ROLE_ADMIN }
+        - { path: '^/categorie', roles: ROLE_ADMIN }
 
         #  Un administrateur a accès à la gestion des catégories
         # correspond à /user/* sauf si la règle précédente s'applique
