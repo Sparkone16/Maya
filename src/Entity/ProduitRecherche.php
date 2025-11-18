@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 class ProduitRecherche
 {
     /**
@@ -16,6 +18,10 @@ class ProduitRecherche
      * @var float|null
      */
     private $prixMaxi;
+    /**
+     * @var Categorie|null
+     */
+    private $categorie;
 
     /**
      * @return string|null
@@ -63,6 +69,22 @@ class ProduitRecherche
     public function setPrixMaxi(?float $prixMaxi): void
     {
         $this->prixMaxi = $prixMaxi;
+    }
+
+    /**
+     * @return Categorie|null
+     */
+    public function getCategorie(): ?Categorie
+    {
+        return $this->categorie;
+    }
+
+    /**
+     * @param float|null $prixMaxi
+     */
+    public function setCategorie(?Categorie $categorie): void
+    {
+        $this->categorie = $categorie;
     }
 
 }

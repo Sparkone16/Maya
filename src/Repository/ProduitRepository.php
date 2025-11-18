@@ -33,6 +33,11 @@ class ProduitRepository extends ServiceEntityRepository
                 ->setParameter('libelle', $produitRecherche->getLibelle().'%');
         }
 
+        if ($produitRecherche->getCategorie()) {
+            $qb->andWhere('p.categorie LIKE :categorie')
+                ->setParameter('categorie', $produitRecherche->getCategorie());
+        }
+
         if ($produitRecherche->getPrixMini()) {
             $qb->andWhere('p.prix >= :prixMini')
                 ->setParameter('prixMini', $produitRecherche->getPrixMini());
