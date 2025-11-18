@@ -4,21 +4,21 @@
 {% endblock %}
 
 {% block body %}
-	<div class="col-md-6 contenu-blanc">
+	<div class="col-md-7 contenu-blanc">
 
 		<h1>
-			{% if lesCategories | length == 0 %}
-				Il n'y a pas de catégorie
-			{% elseif lesCategories | length == 1%}
-				La catégorie
-			{% else %}
-				Les
-				<span>
-					{{  lesCategories | length }}
-				</span>
-				catégories
-			{% endif %}
-		</h1>
+            {% if lesCategories | length == 0 %}
+                Il n'y a pas de catégorie
+            {% elseif lesCategories | length == 1%}
+                La catégorie
+            {% else %}
+                Les
+                <span>
+                    {{  lesCategories | length }}
+                </span>
+                catégories
+            {% endif %}
+        </h1>
 		{{ include('messages.html.twig') }}
 		<div class="contenu">
 			<table class="table table-striped table-advance table-hover">
@@ -26,6 +26,7 @@
 					<tr class="bg-entete">
 						<th>Identifiant</th>
 						<th>Libellé</th>
+                        <th>Nom image</th>
 						<th>Actions</th>
 					</tr>
 				</thead>
@@ -36,6 +37,8 @@
 						<td class="col-md-1">Nouveau</td>
 						<td class="col-md-3">{{ form_widget(formCreation.libelle, {'attr': {'class': 'col-md-12'}}) }}
 							{{ form_errors(formCreation.libelle) }}</td>
+                        <td class="col-md-1">{{ form_widget(formCreation.img) }}
+							{{ form_errors(formCreation.img) }}</td>
 						<td class="col-md-2">
 							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_categorie_ajouter') }}" title="Enregistrer nouvelle catégorie">
 								<i class="fa fa-save"></i>
@@ -55,6 +58,7 @@
 
 								<td>{{ categorie.id }}</td>
 								<td>{{ categorie.libelle }}</td>
+                                <td>{{ categorie.imgFilename }}</td>
 								<!-- formulaire pour demander la modification ou la suppression -->
 								<td>
 									<form>
@@ -64,7 +68,7 @@
 										<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_categorie_supprimer', {'id' : categorie.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');">
 											<i class="fa fa-trash-o "></i>
 											Supprimer</button>
-										<input type="hidden" name="_token" value="{{ csrf_token('action-item' ~ categorie.id) }}">
+										<input type = "hidden" name="_token" value="{{ csrf_token('action-item' ~ categorie.id) }}">
 									</form>
 								</td>
 
@@ -75,6 +79,8 @@
 								<td>{{ categorie.id }}</td>
 								<td>{{ form_widget(formModification.libelle, {'attr': {'class': 'col-md-12'}}) }}
 									{{ form_errors(formModification.libelle) }}</td>
+                                <td>{{ form_widget(formModification.img) }}
+									{{ form_errors(formModification.img) }}</td>
 								<td class="col-md-4">
 									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_categorie_modifier', {'id' : categorie.id }) }}" title="Enregistrer">
 										<i class="fa fa-save"></i>
@@ -99,7 +105,6 @@
 
 				</tbody>
 			</table>
-			{# display navigation #}
 			<div class="navigation">
 				{{ knp_pagination_render(lesCategories) }}
 			</div>
