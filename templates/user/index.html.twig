@@ -1,58 +1,62 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Table d'utilisateur{% endblock %}
+{% block title %}Table d'utilisateur
+{% endblock %}
 
 {% block body %}
-<div class="col-md-10 contenu-blanc">
-    <h1>Table d'utilisateur</h1>
-<div class="contenu">
-    <table class="table table-striped table-advance table-hover">
-        <thead>
-            <tr class="table table-striped table-advance table-hover">
-                <th>Id</th>
-                <th>Email</th>
-                <th>Roles</th>
-                <th>Password</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Telephone</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                <td>{{ user.password }}</td>
-                <td>{{ user.nom }}</td>
-                <td>{{ user.prenom }}</td>
-                <td>{{ user.telephone }}</td>
-                <td>
-				<form>
-                    <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_user_show', {'id': user.id}) }}" title="Enregistrer nouvel utilisateur">
-								<i class="fa fa-search"></i>
-								Afficher</button>
-					<button type="submit" class="btn btn-info btn-sm" formaction="{{ path('app_user_edit', {'id': user.id}) }}" title="Modifier">
-											<i class="fa fa-pencil"></i>
-								Modifier</button>
-					<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_user_2fa', {'id': user.id}) }}" title="Double authentification">
-											<i class="fa fa-lock"></i>
-								2fa</button>
-                </form>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-	<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_user_new') }}" title="Double authentification">
-											<i class="fa fa-plus"></i>
-								Créer nouveau</button>
-	</div>
+	<div class="col-md-10 contenu-blanc">
+		<h1>Table d'utilisateur</h1>
+		<div class="contenu">
+			<table class="table table-striped table-advance table-hover">
+				<thead>
+					<tr class="table table-striped table-advance table-hover">
+						<th>Id</th>
+						<th>Email</th>
+						<th>Roles</th>
+						<th>Password</th>
+						<th>Nom</th>
+						<th>Prenom</th>
+						<th>Telephone</th>
+						<th>actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for user in users %}
+						<tr>
+							<td>{{ user.id }}</td>
+							<td>{{ user.email }}</td>
+							<td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+							<td>{{ user.password }}</td>
+							<td>{{ user.nom }}</td>
+							<td>{{ user.prenom }}</td>
+							<td>{{ user.telephone }}</td>
+							<td>
+								<form>
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_user_show', {'id': user.id}) }}" title="Enregistrer nouvel utilisateur">
+										<i class="fa fa-search"></i>
+										Afficher</button>
+									<button type="submit" class="btn btn-info btn-sm" formaction="{{ path('app_user_edit', {'id': user.id}) }}" title="Modifier">
+										<i class="fa fa-pencil"></i>
+										Modifier</button>
+									<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_user_2fa', {'id': user.id}) }}" title="Double authentification">
+										<i class="fa fa-lock"></i>
+										2fa</button>
+								</form>
+							</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="8">no records found</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_user_new') }}" title="Créer nouveau utilisateur">
+				<i class="fa fa-plus"></i>
+				Créer nouveau</button>
+			<div class="navigation">
+				{{ knp_pagination_render(users) }}
+			</div>
+		</div>
 	</div>
 {% endblock %}
