@@ -3,9 +3,11 @@
 {% block title %}New User{% endblock %}
 
 {% block body %}
-    <h1>Create new User</h1>
+    <h1>Créer un nouvel utilisateur</h1>
 
     {{ include('user/_form.html.twig') }}
 
-    <a href="{{ path('app_user_index') }}">back to list</a>
+    <button class="btn btn-info btn-sm" type="button" title="Retour" onclick="window.location.href='{{ path('app_user_index') }}'">
+										<i class="fa fa-undo"></i>
+										Retour</button>
 {% endblock %}

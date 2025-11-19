@@ -11,17 +11,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\RaceAnimal;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 final class AnimalController extends AbstractController
 {
     #[Route('/animal', name: 'app_animal', methods: ['GET'])]
-    public function index(AnimalRepository $repository): Response
+    public function index(Request $request, AnimalRepository $repository, PaginatorInterface $paginator): Response
     {
         $animal = new Animal();
         $formCreation = $this->createForm(AnimalType::class, $animal);
 
-        $lesAnimaux = $repository->findAll();
-
+        $lesAnimaux = $paginator->paginate(
+            $repository->findAll(),
+            $request->query->getint('page', 1),
+            5
+        );
         return $this->render('animal/index.html.twig', [
             'formCreation' => $formCreation->createView(),
             'lesAnimaux' => $lesAnimaux,
