@@ -26,7 +26,7 @@ class ProduitRechercheType extends AbstractType
                 'choice_label' => 'libelle',
                 'multiple' => false,
                 'expanded' => false,
-                'mapped' => false
+                'mapped' => true
             ])
             ->add('prixMini', MoneyType::class, [
                 'label' => 'Prix minimum',

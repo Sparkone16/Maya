@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Accueil
+{% endblock %}
 
 {% block body %}
 	<div class="col-md-10 contenu-blanc">
@@ -13,16 +14,18 @@
 			<div class="row gap-1 row-gap-5 justify-content-center ">
 				{% for key, categorie in lesCategories %}
 					<div class="col-md-3">
-						<div class="card">
-							{% if categorie.imgFilename == null %}
-								<div class="card-header"></div>
-							{% else %}
-								<img src="{{ asset('uploads/categorieIMG/' ~ categorie.imgFilename) }}" class="card-img-top" alt="Card image cap">
-							{% endif %}
-							<div class="card-body">
-								<h5 class="card-title">{{ categorie.libelle }}</h5>
+						<a href="{{ path('app_produit', { categorie: categorie.id }) }}" class="text-decoration-none text-dark">
+							<div class="card">
+								{% if categorie.imgFilename == null %}
+									<div class="card-header"></div>
+								{% else %}
+									<img src="{{ asset('uploads/categorieIMG/' ~ categorie.imgFilename) }}" class="card-img-top" alt="Card image cap">
+								{% endif %}
+								<div class="card-body">
+									<h5 class="card-title">{{ categorie.libelle }}</h5>
+								</div>
 							</div>
-						</div>
+						</a>
 					</div>
 				{% endfor %}
 			</div>

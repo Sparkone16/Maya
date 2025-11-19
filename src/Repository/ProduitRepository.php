@@ -34,8 +34,8 @@ class ProduitRepository extends ServiceEntityRepository
         }
 
         if ($produitRecherche->getCategorie()) {
-            $qb->andWhere('p.categorie LIKE :categorie')
-                ->setParameter('categorie', $produitRecherche->getCategorie());
+            $qb->andWhere('p.categorie = :cat')
+            ->setParameter('cat', $produitRecherche->getCategorie());
         }
 
         if ($produitRecherche->getPrixMini()) {
