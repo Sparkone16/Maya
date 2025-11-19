@@ -19,9 +19,8 @@ class ProduitRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Produit::class);
     }
-    
     /**
-     * @return Query[]
+     * @return Query
      */
     public function findAllByCriteria(ProduitRecherche $produitRecherche): Query
     {
@@ -32,6 +31,11 @@ class ProduitRepository extends ServiceEntityRepository
         if ($produitRecherche->getLibelle()) {
             $qb->andWhere('p.libelle LIKE :libelle')
                 ->setParameter('libelle', $produitRecherche->getLibelle().'%');
+        }
+
+        if ($produitRecherche->getCategorie()) {
+            $qb->andWhere('p.categorie LIKE :categorie')
+                ->setParameter('categorie', $produitRecherche->getCategorie());
         }
 
         if ($produitRecherche->getPrixMini()) {
@@ -48,7 +52,7 @@ class ProduitRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return Query[]
+    * @return Query
     */
    public function findAllOrderByLibelle(): Query
    {

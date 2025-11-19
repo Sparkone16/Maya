@@ -51,8 +51,8 @@ class ProduitType extends AbstractType
             ])
 //            ->add('recettes')    // on ne gère pas les recettes dans la gestion des produits
         ;
-
     }
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {

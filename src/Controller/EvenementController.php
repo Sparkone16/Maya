@@ -79,7 +79,7 @@ final class EvenementController extends AbstractController
             ]);
         }
     }
-    #[Route('/Evenement/demandermodification/{id<\d+>}', name: 'app_evenement_demandermodification', methods: ['GET'])]
+    #[Route('/evenement/demandermodification/{id<\d+>}', name: 'app_evenement_demandermodification', methods: ['GET'])]
     public function demanderModification(EvenementRepository $repository, Evenement $EvenementModif, Request $request): Response
     {
         if ($this->isCsrfTokenValid('action-item' . $EvenementModif->getId(), $request->get('_token'))) {
@@ -136,7 +136,7 @@ final class EvenementController extends AbstractController
             ]);
         }
     }
-        #[Route('/Evenement/supprimer/{id<\d+>}', name: 'app_evenement_supprimer', methods: ['GET'])]
+        #[Route('/evenement/supprimer/{id<\d+>}', name: 'app_evenement_supprimer', methods: ['GET'])]
     public function supprimer(Evenement $Evenement, Request $request, EntityManagerInterface $entityManager)
     {
             // supprimer l'évènement

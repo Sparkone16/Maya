@@ -69,7 +69,7 @@ class Produit
     #[ORM\Column]
     private ?bool $cuit = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
     private ?bool $bio = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
@@ -207,7 +207,7 @@ class Produit
         return $this->bio;
     }
 
-    public function setBio(?bool $bio): static
+    public function setBio(bool $bio): static
     {
         $this->bio = $bio;
 
