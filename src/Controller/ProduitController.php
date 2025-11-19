@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Categorie;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,7 +12,7 @@ use App\Form\ProduitType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\ProduitRecherche;
-use App\Form\ProduitRechercheType;   
+use App\Form\ProduitRechercheType;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -21,7 +22,7 @@ final class ProduitController extends AbstractController
 {
 
     #[Route('/produit', name: 'app_produit', methods: ['GET'])]
-    public function index(Request $request, ProduitRepository $repository, SessionInterface $session, PaginatorInterface $paginator): Response
+    public function index(EntityManagerInterface $entityManager, Request $request, ProduitRepository $repository, SessionInterface $session, PaginatorInterface $paginator): Response
     {
         // créer l'objet et le formulaire de recherche
         $produitRecherche = new ProduitRecherche();
@@ -31,11 +32,37 @@ final class ProduitController extends AbstractController
             // optionnel : désactiver CSRF pour formulaires GET 
             // 'csrf_protection' => false,
         ]);
+        if ($request->query->get('categorie')) {
+
+            // Charger l’entité catégorie
+            $categorie = $entityManager->getRepository(Categorie::class)
+                ->find($request->query->get('categorie'));
+
+            if ($categorie) {
+                $produitRecherche->setCategorie($categorie);
+                $formRecherche->get('categorie')->setData($categorie);
+            }
+            $data = $session->get("ProduitCriteres");
+            $session->set('ProduitCriteres', [
+                'libelle' => $data['libelle'],
+                'prixMini' => $data['prixMini'],
+                'prixMaxi' => $data['prixMaxi'],
+                'categorieId' => $request->query->get('categorie')
+            ]);
+        }
         $formRecherche->handleRequest($request);
         if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
             $produitRecherche = $formRecherche->getData();
+            if ($produitRecherche->getCategorie()) {
+                $produitRecherche->setCategorieId($produitRecherche->getCategorie()->getId());
+            }
             // mémoriser les critères de sélection dans une variable de session
-            $session->set('ProduitCriteres', $produitRecherche);
+            $session->set('ProduitCriteres', [
+                'libelle' => $produitRecherche->getLibelle(),
+                'prixMini' => $produitRecherche->getPrixMini(),
+                'prixMaxi' => $produitRecherche->getPrixMaxi(),
+                'categorieId' => $produitRecherche->getCategorieId()
+            ]);
             // cherche les produits correspondant aux critères, triés par libellé
             // requête construite dynamiquement alors il est plus simple d'utiliser le querybuilder
             $lesProduits = $paginator->paginate(
@@ -43,13 +70,20 @@ final class ProduitController extends AbstractController
                 $request->query->getint('page', 1),
                 5
             );
-
-
         } else {
             // lire les produits
             if ($session->has("ProduitCriteres")) {
                 // récupérer les critères en session
-                $produitRecherche = $session->get("ProduitCriteres");
+                $data = $session->get("ProduitCriteres");
+
+                $produitRecherche = new ProduitRecherche();
+                $produitRecherche->setLibelle($data['libelle']);
+                $produitRecherche->setPrixMini($data['prixMini']);
+                $produitRecherche->setPrixMaxi($data['prixMaxi']);
+                if ($data['categorieId']) {
+                    $categorie = $entityManager->getRepository(Categorie::class)->find($data['categorieId']);
+                    $produitRecherche->setCategorie($categorie);
+                }
                 $lesProduits = $paginator->paginate(
                     $repository->findAllByCriteria($produitRecherche),
                     $request->query->getint('page', 1),
@@ -66,9 +100,7 @@ final class ProduitController extends AbstractController
                     $request->query->getint('page', 1),
                     5
                 );
-
             }
-
         }
 
         return $this->render('produit/index.html.twig', [
@@ -151,5 +183,4 @@ final class ProduitController extends AbstractController
         }
         return $this->redirectToRoute('app_produit');
     }
-
 }

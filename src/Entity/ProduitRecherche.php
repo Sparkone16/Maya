@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 
 class ProduitRecherche
 {
@@ -22,6 +21,10 @@ class ProduitRecherche
      * @var Categorie|null
      */
     private $categorie;
+    /**
+     * @var int|null
+     */
+    private $categorieId;
 
     /**
      * @return string|null
@@ -85,6 +88,15 @@ class ProduitRecherche
     public function setCategorie(?Categorie $categorie): void
     {
         $this->categorie = $categorie;
+    }
+
+    
+    public function getCategorieId(): ?int {
+        return $this->categorieId;
+    }
+
+    public function setCategorieId(?int $id): void {
+        $this->categorieId = $id;
     }
 
 }
