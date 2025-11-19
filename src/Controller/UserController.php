@@ -105,11 +105,4 @@ final class UserController extends AbstractController
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
-    #[Route('/{id}/2fa', name: 'app_user_2fa', methods: ['GET'])]
-    public function user2fa(User $user): Response
-    {
-        return $this->render('user/2fa.html.twig', [
-            'user' => $user,
-        ]);
-    }
 }
