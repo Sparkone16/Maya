@@ -1,9 +1,25 @@
 2fa_login:
+<<<<<<< HEAD
 # route pour le formulaire d'authentification à double facteur
+=======
+<<<<<<< HEAD
+    # route pour le formulaire d'authentification à double facteur
+=======
+# route pour le formulaire d'authentification à double facteur
+>>>>>>> bf32fbd0fbab2c1680c6b6d4d8358749d160b435
+>>>>>>> main
     path: /2fa
     defaults:
         _controller: "scheb_two_factor.form_controller::form"
 
 2fa_login_check:
+<<<<<<< HEAD
 # route pour la vérification du code d'authentification double facteur
+=======
+<<<<<<< HEAD
+    # route pour la vérification du code d'authentification double facteur
+=======
+# route pour la vérification du code d'authentification double facteur
+>>>>>>> bf32fbd0fbab2c1680c6b6d4d8358749d160b435
+>>>>>>> main
     path: /2fa_check

@@ -32,9 +32,9 @@ class Produit
     #[Assert\Range(min: 0.1, max: 999)]
     private ?string $prix = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column]
     #[Assert\Type("\DateTime")]
-    private ?\DateTimeInterface $dateCreation = null;
+    private ?\DateTime $dateCreation = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
@@ -67,12 +67,12 @@ class Produit
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     #[Assert\Type("\DateTime")]
-    private ?\DateTimeInterface $debutDisponibilite = null;
+    private ?\DateTime $debutDisponibilite = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     #[Assert\Type("\DateTime")]
     #[Assert\Range(minPropertyPath: "debutDisponibilite")]
-    private ?\DateTimeInterface $finDisponibilite = null;
+    private ?\DateTime $finDisponibilite = null;
 
     public function getId(): ?int
     {

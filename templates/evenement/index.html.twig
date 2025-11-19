@@ -6,11 +6,17 @@
 {% block body %}
 	<div class="col-md-9 contenu-blanc">
 
-		<h1>Les
-			<span>
-				{{  lesEvenements | length }}
-			</span>
-			Evenements
+		<h1>{% if lesEvenements | length == 0 %}
+				Il n'y a pas d'evenements
+			{% elseif lesEvenements | length == 1%}
+				L'evenement
+			{% else %}
+				Les
+				<span>
+					{{  lesEvenements | length }}
+				</span>
+				evenements
+			{% endif %}
 		</h1>
 		{{ include('messages.html.twig') }}
 
@@ -128,6 +134,10 @@
 					{% endfor %}
 				</tbody>
 			</table>
+			{# display navigation #}
+			<div class="navigation">
+				{{ knp_pagination_render(lesEvenements) }}
+			</div>
 		</div>
 		<!--fin div contenu-->
 	</div>

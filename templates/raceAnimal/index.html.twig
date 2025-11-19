@@ -1,96 +1,114 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Race Animal{% endblock %}
+{% block title %}Race Animal
+{% endblock %}
 
 {% block body %}
-<div class="col-md-7 contenu-blanc">
+	<div class="col-md-7 contenu-blanc">
 
-    <h1>
-            {% if lesRaces | length == 0 %}
-                Il n'y a pas de races
-            {% elseif lesRaces | length == 1%}
-                La race
-            {% else %}
-                Les
-                <span>
-                    {{  lesRaces | length }}
-                </span>
-                races
-            {% endif %}
-        </h1>
+		<h1>
+			{% if lesRaces | length == 0 %}
+				Il n'y a pas de races
+			{% elseif lesRaces | length == 1%}
+				La race
+			{% else %}
+				Les
+				<span>
+					{{  lesRaces | length }}
+				</span>
+				races
+			{% endif %}
+		</h1>
 
-    {{ include('messages.html.twig') }}
+		{{ include('messages.html.twig') }}
 
-    <div class="contenu">
-        <table class="table table-striped table-advance table-hover">
-            <thead>
-            <tr class="bg-entete">
-                <th>Identifiant</th>
-                <th>Nom</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
+		<div class="contenu">
+			<table class="table table-striped table-advance table-hover">
+				<thead>
+					<tr class="bg-entete">
+						<th>Identifiant</th>
+						<th>Nom</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
 
-            {# Formulaire pour ajouter une nouvelle raceAnimal #}
-            <tr>
-                {{ form_start(formCreation)}}
-                <td class="col-md-1">Nouveau</td>
-                <td>{{ form_widget(formCreation.intitule, {'attr': {'class': 'col-md-4'}}) }}{{ form_errors(formCreation.intitule) }}</td>
-                <td class="col-md-2">
-                    <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_ajouter') }}" title="Enregistrer nouvel Race Animal">
-                        <i class="fa fa-save"></i> Enregistrer
-                    </button>
-                    <button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
-                        <i class="fa fa-eraser"></i> Annuler
-                    </button>
-                </td>
-                {{ form_rest(formCreation) }}
-                {{ form_end(formCreation)}}
-            </tr>
-
-            {# Liste des races existantes #}
-            {% for key, raceAnimal in lesRaces %}
-                <tr>
-                    {% if raceAnimal.id != idRaceAnimalModif %}
-                        <td>{{ raceAnimal.id }}</td>
-                        <td>{{ raceAnimal.intitule }}</td>
-                        <td>
-                            <form>
-                                <button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_race_animal_demandermodification', {'id' : raceAnimal.id }) }}" title="Modifier">
-                                    <i class="fa fa-pencil"></i> Modifier
-                                </button>
-                                <button type="submit" class="btn btn-danger btn-sm" formaction="{{ path('app_race_animal_supprimer', {'id' : raceAnimal.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cette race animal ?');">
-                                    <i class="fa fa-trash-o"></i> Supprimer
-                                </button>
-                                <input type = "hidden" name="_token" value="{{ csrf_token('action-item' ~ raceAnimal.id) }}">     {#  ~     pour concaténer des chaines en twig #}
-                            </form>
-                        </td>
-                    {% else %}
-
-                        <!-- formulaire pour modifier une raceAnimal -->
-                        {{ form_start(formModification) }}
-                        <td>{{ raceAnimal.id }}</td>
-                        <td>{{ form_widget(formModification.intitule, {'attr': {'class': 'col-md-12'}}) }} {{ form_errors(formModification.intitule) }}</td>
-                        <td class="col-md-4">
-                            <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_modifier', {'id' : raceAnimal.id }) }}"  title="Enregistrer"><i class="fa fa-save"></i> Enregistrer</button>
-                            <button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie"><i class="fa fa-eraser"></i> Effacer</button>
-                            <button class="btn btn-warning btn-sm" type="button" title="Annuler">
-								<a href="{{ path('app_race_animal') }}">
-									<i class="fa fa-undo"></i>
-									Annuler
-								</a>
+					{# Formulaire pour ajouter une nouvelle raceAnimal #}
+					<tr>
+						{{ form_start(formCreation)}}
+						<td class="col-md-1">Nouveau</td>
+						<td>{{ form_widget(formCreation.intitule, {'attr': {'class': 'col-md-4'}}) }}{{ form_errors(formCreation.intitule) }}</td>
+						<td class="col-md-2">
+							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_ajouter') }}" title="Enregistrer nouvel Race Animal">
+								<i class="fa fa-save"></i>
+								Enregistrer
 							</button>
-                        </td>
-                        {# Ceci va générer le champ CSRF #}
-                        {{ form_rest(formModification) }}
-                        {{ form_end(formModification) }}
-                    {% endif %}
-                </tr>
-            {% endfor %}
+							<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
+								<i class="fa fa-eraser"></i>
+								Annuler
+							</button>
+						</td>
+						{{ form_rest(formCreation) }}
+						{{ form_end(formCreation)}}
+					</tr>
 
-            </tbody>
-        </table>
-    </div> <!-- fin div contenu -->
-</div> <!-- fin div col-md-10 -->
+					{# Liste des races existantes #}
+					{% for key, raceAnimal in lesRaces %}
+						<tr>
+							{% if raceAnimal.id != idRaceAnimalModif %}
+								<td>{{ raceAnimal.id }}</td>
+								<td>{{ raceAnimal.intitule }}</td>
+								<td>
+									<form>
+										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_race_animal_demandermodification', {'id' : raceAnimal.id }) }}" title="Modifier">
+											<i class="fa fa-pencil"></i>
+											Modifier
+										</button>
+										<button type="submit" class="btn btn-danger btn-sm" formaction="{{ path('app_race_animal_supprimer', {'id' : raceAnimal.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cette race animal ?');">
+											<i class="fa fa-trash-o"></i>
+											Supprimer
+										</button>
+										<input
+										type="hidden" name="_token" value="{{ csrf_token('action-item' ~ raceAnimal.id) }}">
+									{#  ~     pour concaténer des chaines en twig #}
+									</form>
+								</td>
+							{% else %}
+
+								<!-- formulaire pour modifier une raceAnimal -->
+								{{ form_start(formModification) }}
+								<td>{{ raceAnimal.id }}</td>
+								<td>{{ form_widget(formModification.intitule, {'attr': {'class': 'col-md-12'}}) }}
+									{{ form_errors(formModification.intitule) }}</td>
+								<td class="col-md-4">
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_modifier', {'id' : raceAnimal.id }) }}" title="Enregistrer">
+										<i class="fa fa-save"></i>
+										Enregistrer</button>
+									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
+										<i class="fa fa-eraser"></i>
+										Effacer</button>
+									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
+										<a href="{{ path('app_race_animal') }}">
+											<i class="fa fa-undo"></i>
+											Annuler
+										</a>
+									</button>
+								</td>
+								{# Ceci va générer le champ CSRF #}
+								{{ form_rest(formModification) }}
+								{{ form_end(formModification) }}
+							{% endif %}
+						</tr>
+					{% endfor %}
+
+				</tbody>
+			</table>
+			{# display navigation #}
+			<div class="navigation">
+				{{ knp_pagination_render(lesRaces) }}
+			</div>
+			<!-- fin div contenu -->
+		</div>
+		<!-- fin div col-md-10 -->
+	</div>
 {% endblock %}

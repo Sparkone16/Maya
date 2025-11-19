@@ -2,24 +2,27 @@
 
 namespace App\Controller;
 
+use App\Entity\Categorie;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\ProduitRepository;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\ProduitRecherche;
-use App\Form\ProduitRechercheType;   
+use App\Form\ProduitRechercheType;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
 
-class ProduitController extends AbstractController
+
+final class ProduitController extends AbstractController
 {
+
     #[Route('/produit', name: 'app_produit', methods: ['GET'])]
-    public function index(Request $request, ProduitRepository $repository, SessionInterface $session, PaginatorInterface $paginator): Response
+    public function index(EntityManagerInterface $entityManager, Request $request, ProduitRepository $repository, SessionInterface $session, PaginatorInterface $paginator): Response
     {
         // créer l'objet et le formulaire de recherche
         $produitRecherche = new ProduitRecherche();
@@ -29,11 +32,37 @@ class ProduitController extends AbstractController
             // optionnel : désactiver CSRF pour formulaires GET 
             // 'csrf_protection' => false,
         ]);
+        if ($request->query->get('categorie')) {
+
+            // Charger l’entité catégorie
+            $categorie = $entityManager->getRepository(Categorie::class)
+                ->find($request->query->get('categorie'));
+
+            if ($categorie) {
+                $produitRecherche->setCategorie($categorie);
+                $formRecherche->get('categorie')->setData($categorie);
+            }
+            $data = $session->get("ProduitCriteres");
+            $session->set('ProduitCriteres', [
+                'libelle' => $data['libelle'],
+                'prixMini' => $data['prixMini'],
+                'prixMaxi' => $data['prixMaxi'],
+                'categorieId' => $request->query->get('categorie')
+            ]);
+        }
         $formRecherche->handleRequest($request);
         if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
             $produitRecherche = $formRecherche->getData();
+            if ($produitRecherche->getCategorie()) {
+                $produitRecherche->setCategorieId($produitRecherche->getCategorie()->getId());
+            }
             // mémoriser les critères de sélection dans une variable de session
-            $session->set('ProduitCriteres', $produitRecherche);
+            $session->set('ProduitCriteres', [
+                'libelle' => $produitRecherche->getLibelle(),
+                'prixMini' => $produitRecherche->getPrixMini(),
+                'prixMaxi' => $produitRecherche->getPrixMaxi(),
+                'categorieId' => $produitRecherche->getCategorieId()
+            ]);
             // cherche les produits correspondant aux critères, triés par libellé
             // requête construite dynamiquement alors il est plus simple d'utiliser le querybuilder
             $lesProduits = $paginator->paginate(
@@ -45,7 +74,16 @@ class ProduitController extends AbstractController
             // lire les produits
             if ($session->has("ProduitCriteres")) {
                 // récupérer les critères en session
-                $produitRecherche = $session->get("ProduitCriteres");
+                $data = $session->get("ProduitCriteres");
+
+                $produitRecherche = new ProduitRecherche();
+                $produitRecherche->setLibelle($data['libelle']);
+                $produitRecherche->setPrixMini($data['prixMini']);
+                $produitRecherche->setPrixMaxi($data['prixMaxi']);
+                if ($data['categorieId']) {
+                    $categorie = $entityManager->getRepository(Categorie::class)->find($data['categorieId']);
+                    $produitRecherche->setCategorie($categorie);
+                }
                 $lesProduits = $paginator->paginate(
                     $repository->findAllByCriteria($produitRecherche),
                     $request->query->getint('page', 1),
@@ -70,8 +108,6 @@ class ProduitController extends AbstractController
         ]);
     }
 
-
-
     #[Route('/produit/reinitialiser', name: 'app_produit_reinitialiser', methods: ['GET'])]
     public function reinitialiser(Request $request): Response
     {
@@ -84,14 +120,12 @@ class ProduitController extends AbstractController
         return $this->redirectToRoute('app_produit');
     }
 
-
-    #[Route('/produit/ajouter', name: 'app_produit_ajouter')]
+    #[Route('/produit/ajouter', name: 'app_produit_ajouter', methods: ['POST', 'GET'])]
     public function ajouter(Request $request, EntityManagerInterface $entityManager): Response
     {
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
-        
         if ($form->isSubmitted() && $form->isValid()) {
             // cas où le formulaire d'ajout a été soumis par l'utilisateur 
             $produit = $form->getData();
@@ -111,7 +145,7 @@ class ProduitController extends AbstractController
         }
     }
 
-    #[Route('/produit/modifier/{id<\d+>}', name: 'app_produit_modifier')]
+    #[Route('/produit/modifier/{id<\d+>}', name: 'app_produit_modifier', methods: ['POST', 'GET'])]
     public function modifier(Produit $produit, Request $request, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ProduitType::class, $produit);
@@ -123,7 +157,7 @@ class ProduitController extends AbstractController
             $entityManager->flush();
             $this->addFlash(
                 'success',
-                'Le produit '.$produit->getLibelle().' a été modifié.'
+                'Le produit ' . $produit->getLibelle() . ' a été modifié.'
             );
 
             return $this->redirectToRoute('app_produit');
@@ -134,7 +168,7 @@ class ProduitController extends AbstractController
         ]);
     }
 
-    #[Route('/produit/supprimer/{id<\d+>}', name: 'app_produit_supprimer')]
+    #[Route('/produit/supprimer/{id<\d+>}', name: 'app_produit_supprimer', methods: ['GET'])]
     public function supprimer(Produit $produit, Request $request, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('action-item' . $produit->getId(), $request->get('_token'))) {
@@ -147,10 +181,4 @@ class ProduitController extends AbstractController
         }
         return $this->redirectToRoute('app_produit');
     }
-
-
-
 }
-
-
-

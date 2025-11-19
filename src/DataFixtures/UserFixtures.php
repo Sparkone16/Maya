@@ -36,7 +36,6 @@ class UserFixtures extends Fixture
             // en production, chaque user a une clé personnalisée
             $user->setGoogleAuthenticatorSecret('ZHAXPDP6WI4GPJSUKXA7DOGY3MJ3YP2545A7KSI4G44STUADRPJQ');
 
-
             if ($i == 0) {
                 $user->setRoles(array("ROLE_USER", "ROLE_ADMIN"));
             }
