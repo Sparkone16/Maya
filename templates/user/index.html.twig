@@ -4,62 +4,6 @@
 {% endblock %}
 
 {% block body %}
-    <h1>User index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Email</th>
-                <th>Roles</th>
-                <th>Password</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Telephone</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                <td>{{ user.password }}</td>
-                <td>{{ user.nom }}</td>
-                <td>{{ user.prenom }}</td>
-                <td>{{ user.telephone }}</td>
-                <td>
-                    <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
-                    <a href="{{ path('app_user_2fa', {'id': user.id}) }}">2fa</a>
-
-				<form>
-                    <button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_user_show', {'id': user.id}) }}" title="Enregistrer nouvel utilisateur">
-								<i class="fa fa-search"></i>
-								Afficher</button>
-					<button type="submit" class="btn btn-info btn-sm" formaction="{{ path('app_user_edit', {'id': user.id}) }}" title="Modifier">
-											<i class="fa fa-pencil"></i>
-								Modifier</button>
-					<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_user_2fa', {'id': user.id}) }}" title="Double authentification">
-											<i class="fa fa-lock"></i>
-								2fa</button>
-                </form>
-                    <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
-                    <a href="{{ path('app_user_2fa', {'id': user.id}) }}">2fa</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_user_new') }}">Create new</a>
-{% endblock %}
 	<div class="col-md-10 contenu-blanc">
 		<h1>Table d'utilisateur</h1>
 		<div class="contenu">

@@ -34,7 +34,7 @@ class UserFixtures extends Fixture
             $user->setPassword($this->passwordHasher->hashPassword($user, 'userdemo'));
             // pour les tests, on utilise la même clé secrete pour le service Google Authenticator
             // en production, chaque user a une clé personnalisée
-            $user->setGoogleAuthenticatorSecret('ZHAXPDP6WI4GPJSUKXA7DOGY3MJ3YP2545A7KSI4G44STUADRPJQ');
+            $user->setGoogleAuthenticatorSecret('VMMYU4C772ZACZYOQSGXLM6GBG62SUGEYGFLY5XEYSLHTLO5NL6A');
 
             if ($i == 0) {
                 $user->setRoles(array("ROLE_USER", "ROLE_ADMIN"));
