@@ -7,18 +7,18 @@
 	<div class="col-md-7 contenu-blanc">
 
 		<h1>
-            {% if lesCategories | length == 0 %}
-                Il n'y a pas de catégorie
-            {% elseif lesCategories | length == 1%}
-                La catégorie
-            {% else %}
-                Les
-                <span>
-                    {{  lesCategories | length }}
-                </span>
-                catégories
-            {% endif %}
-        </h1>
+			{% if lesCategories | length == 0 %}
+				Il n'y a pas de catégorie
+			{% elseif lesCategories | length == 1%}
+				La catégorie
+			{% else %}
+				Les
+				<span>
+					{{  lesCategories | length }}
+				</span>
+				catégories
+			{% endif %}
+		</h1>
 		{{ include('messages.html.twig') }}
 		<div class="contenu">
 			<table class="table table-striped table-advance table-hover">
@@ -68,7 +68,7 @@
 										<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_categorie_supprimer', {'id' : categorie.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');">
 											<i class="fa fa-trash-o "></i>
 											Supprimer</button>
-										<input type = "hidden" name="_token" value="{{ csrf_token('action-item' ~ categorie.id) }}">
+										<input type="hidden" name="_token" value="{{ csrf_token('action-item' ~ categorie.id) }}">
 									</form>
 								</td>
 
@@ -105,6 +105,9 @@
 
 				</tbody>
 			</table>
+			<div class="navigation">
+				{{ knp_pagination_render(lesCategories) }}
+			</div>
 		</div>
 		<!--fin div contenu-->
 	</div>

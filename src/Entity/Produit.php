@@ -32,7 +32,6 @@ class Produit
         minMessage: 'Le libellé doit comporter au moins {{ limit }} caractères',
         maxMessage: 'Le libellé ne peut pas dépasser {{ limit }} caractères',
     )]
-
     private ?string $libelle = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 7, scale: 2)]

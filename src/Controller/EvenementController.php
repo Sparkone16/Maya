@@ -10,18 +10,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Knp\Component\Pager\PaginatorInterface;
 
 final class EvenementController extends AbstractController
 {
     #[Route('/evenement', name: 'app_evenement', methods: ['GET'])]
-    public function index(EvenementRepository $repository): Response
+    public function index(Request $request, EvenementRepository $repository, PaginatorInterface $paginator ): Response
     {
         // créer l'objet et le formulaire de création
         $Evenement= new Evenement();
         $formCreation = $this->createForm(EvenementType::class, $Evenement);
 
-        // lire les Evenements
-        $lesEvenements = $repository->findAll();
+        // Pagination
+        $lesEvenements = $paginator->paginate(
+            $repository->findAll(),
+            $request->query->getint('page', 1),
+            5
+        );
         return $this->render('evenement/index.html.twig', [
             'formCreation' => $formCreation-> createView(),
             'lesEvenements' => $lesEvenements,
@@ -74,7 +79,7 @@ final class EvenementController extends AbstractController
             ]);
         }
     }
-    #[Route('/Evenement/demandermodification/{id<\d+>}', name: 'app_evenement_demandermodification', methods: ['GET'])]
+    #[Route('/evenement/demandermodification/{id<\d+>}', name: 'app_evenement_demandermodification', methods: ['GET'])]
     public function demanderModification(EvenementRepository $repository, Evenement $EvenementModif, Request $request): Response
     {
         if ($this->isCsrfTokenValid('action-item' . $EvenementModif->getId(), $request->get('_token'))) {
@@ -131,7 +136,7 @@ final class EvenementController extends AbstractController
             ]);
         }
     }
-        #[Route('/Evenement/supprimer/{id<\d+>}', name: 'app_evenement_supprimer', methods: ['GET'])]
+        #[Route('/evenement/supprimer/{id<\d+>}', name: 'app_evenement_supprimer', methods: ['GET'])]
     public function supprimer(Evenement $Evenement, Request $request, EntityManagerInterface $entityManager)
     {
             // supprimer l'évènement

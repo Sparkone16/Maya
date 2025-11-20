@@ -20,6 +20,43 @@
 		</h1>
 		{{ include('messages.html.twig') }}
 
+		{# formulaire de recherche des clients #}
+        {{ form_start(formRecherche, {'method': 'get', 'action': path('app_client')}) }}
+        <div class="container-fluid contenu"> 
+            <div class="row">
+
+                <div class="col-md-8 row font-weight-bold">
+                    <div class="col-md-3">{{ form_label(formRecherche.nom) }}</div>
+                    <div class="col-md-3">{{ form_label(formRecherche.prenom) }}</div>
+                    <div class="col-md-3">{{ form_label(formRecherche.adresse) }}</div>
+					<div class="col-md-3">{{ form_label(formRecherche.mail) }}</div>
+                </div>
+			</div>
+			<div class="row ">
+				<div class="col-md-8 row">
+					<div class="col-md-3">{{ form_widget(formRecherche.nom) }}</div>
+                    <div class="col-md-3">{{ form_widget(formRecherche.prenom) }}</div>
+                    <div class="col-md-3">{{ form_widget(formRecherche.adresse) }}</div>
+					<div class="col-md-3">{{ form_widget(formRecherche.mail) }}</div>
+				</div>
+                <div
+                    class="col-md-4">
+                    <button class="btn btn-primary btn-sm" type="submit" title="Afficher les clients">
+                        <i class="fa fa-save"></i>
+                        Afficher</button>
+                    <button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
+                        <i class="fa fa-eraser"></i>
+                        Effacer</button>
+                    {# lien qui réinitialise la recherche : renvoie à la route app_client sans query string #}
+                    <a href="{{ path('app_client_reinitialiser') }}" class="btn btn-secondary btn-sm" title="Réinitialiser la liste">
+                        <i class="fa fa-refresh"></i>
+                        Réinitialiser</a>
+                </div>
+            </div>
+        </div>
+        {{ form_end(formRecherche) }}
+
+
 		<div class="contenu">
 			<table class="table table-striped table-advance table-hover">
 				<thead>
@@ -131,6 +168,10 @@
 					{% endfor %}
 				</tbody>
 			</table>
+			{# display navigation #}
+            <div class="navigation">
+                {{ knp_pagination_render(lesClients) }}
+            </div>
 		</div>
 		<!--fin div contenu-->
 	</div>

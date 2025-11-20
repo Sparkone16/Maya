@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\RecetteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RecetteRepository::class)]
@@ -23,6 +24,18 @@ class Recette
      */
     #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'recettes')]
     private Collection $produits;
+
+    #[ORM\Column]
+    private ?int $tempsPreparation = null;
+
+    #[ORM\Column]
+    private ?int $tempsCuisson = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $ingredient = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $description = null;
 
     public function __construct()
     {
@@ -66,6 +79,54 @@ class Recette
     public function removeProduit(Produit $produit): static
     {
         $this->produits->removeElement($produit);
+
+        return $this;
+    }
+
+    public function getTempsPreparation(): ?int
+    {
+        return $this->tempsPreparation;
+    }
+
+    public function setTempsPreparation(int $tempsPreparation): static
+    {
+        $this->tempsPreparation = $tempsPreparation;
+
+        return $this;
+    }
+
+    public function getTempsCuisson(): ?int
+    {
+        return $this->tempsCuisson;
+    }
+
+    public function setTempsCuisson(int $tempsCuisson): static
+    {
+        $this->tempsCuisson = $tempsCuisson;
+
+        return $this;
+    }
+
+    public function getIngredient(): ?string
+    {
+        return $this->ingredient;
+    }
+
+    public function setIngredient(string $ingredient): static
+    {
+        $this->ingredient = $ingredient;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

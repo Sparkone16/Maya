@@ -10,28 +10,86 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use App\Entity\ClientRecherche;
+use App\Form\ClientRechercheType;   
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Knp\Component\Pager\PaginatorInterface;
+
 
 
 final class ClientController extends AbstractController
 {
     #[Route('/client', name: 'app_client', methods: ['GET'])]
-    public function index(ClientRepository $repository): Response
+    public function index(Request $request, ClientRepository $repository, SessionInterface $session,PaginatorInterface $paginator): Response
     {
-        // créer l'objet et le formulaire de création
-        $Client = new Client();
-        $formCreation = $this->createForm(ClientType::class, $Client);
+        // créer l'objet et le formulaire de recherche
+        $clientRecherche = new ClientRecherche();
+        // form en GET : Symfony lira les paramètres depuis $request->query
+        $formRecherche = $this->createForm(ClientRechercheType::class, $clientRecherche, [
+            'method' => 'GET',
+            // optionnel : désactiver CSRF pour formulaires GET 
+            // 'csrf_protection' => false,
+        ]);
+        $formRecherche->handleRequest($request);
+        if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
+            $clientRecherche = $formRecherche->getData();
+            // mémoriser les critères de sélection dans une variable de session
+            $session->set('ClientCriteres', $clientRecherche);
+            // cherche les clients correspondant aux critères, triés par libellé
+            // requête construite dynamiquement alors il est plus simple d'utiliser le querybuilder
+            $lesClients = $paginator->paginate(
+                $repository->findAllByCriteria($clientRecherche),
+                $request->query->getint('page', 1),
+                5
+            );
+        } else {
+            // lire les clients
+            if ($session->has("ClientCriteres")) {
+                // récupérer les critères en session
+                $clientRecherche = $session->get("ClientCriteres");
+                $lesClients = $paginator->paginate(
+                    $repository->findAllByCriteria($clientRecherche),
+                    $request->query->getint('page', 1),
+                    5
+                );
+                $formRecherche = $this->createForm(ClientRechercheType::class, $clientRecherche);
+                // injecter les critères en session dans le formulaire de recherche
+                $formRecherche->setData($clientRecherche);
+            } else {
+                $prodRech = new ClientRecherche();
+                $lesClients = $paginator->paginate(
+                    $repository->findAllOrderByLibelle($prodRech),
+                    $request->query->getint('page', 1),
+                    5
+                );
+            }
+        }
+        $client = new Client();
+        $formCreation = $this->createForm(ClientType::class, $client);
 
-        // lire les clients
-        $lesClients = $repository->findAll();
         return $this->render('client/index.html.twig', [
-            'formCreation' => $formCreation-> createView(),
+            'formRecherche' => $formRecherche,
             'lesClients' => $lesClients,
-            'formModification' => null,
+            'formCreation' => $formCreation->createView(),
             'idClientModif' => null,
-
+            'formModification' => null,
         ]);
     }
-        #[Route('/client/ajouter', name: 'app_client_ajouter', methods: ['POST'])]
+
+    #[Route('/client/reinitialiser', name: 'app_client_reinitialiser', methods: ['GET'])]
+    public function reinitialiser(Request $request): Response
+    {
+        // supprimer les critères de recherche en session
+        $session = $request->getSession();
+        if ($session->has('ClientsCriteres')) {
+            $session->remove('ClientsCriteres');
+        }
+
+        return $this->redirectToRoute('app_client');
+    }
+    
+    
+    #[Route('/client/ajouter', name: 'app_client_ajouter', methods: ['POST'])]
     public function ajouter(Request $request, EntityManagerInterface $entityManager, ClientRepository $repository): Response
 
     {

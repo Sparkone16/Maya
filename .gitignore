@@ -22,4 +22,5 @@
 ### Migrations
 /migrations/
 
-/public/uploads
+
+/public/uploads/

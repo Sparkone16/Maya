@@ -12,18 +12,20 @@
         {{ form_start(formRecherche, {'method': 'get', 'action': path('app_produit')}) }}
             <div class="container-fluid contenu"> <div class="row">
                 <div class="col-md-8 row font-weight-bold">
-                    <div class="col-md-6">{{ form_label(formRecherche.libelle) }}</div>
-                    <div class="col-md-3">{{ form_label(formRecherche.prixMini) }}</div>
-                    <div class="col-md-3">{{ form_label(formRecherche.prixMaxi) }}</div>
+                    <div class="col-md-5">{{ form_label(formRecherche.libelle) }}</div>
+                    <div class="col-md-3">{{ form_label(formRecherche.categorie) }}</div>
+                    <div class="col-md-2">{{ form_label(formRecherche.prixMini) }}</div>
+                    <div class="col-md-2">{{ form_label(formRecherche.prixMaxi) }}</div>
                 </div>
             </div>
 
             <div class="row">
 
                 <div class="col-md-8 row">
-                    <div class="col-md-6">{{ form_widget(formRecherche.libelle) }}</div>
-                    <div class="col-md-3">{{ form_widget(formRecherche.prixMini) }}</div>
-                    <div class="col-md-3">{{ form_widget(formRecherche.prixMaxi) }}</div>
+                    <div class="col-md-5">{{ form_widget(formRecherche.libelle) }}</div>
+                    <div class="col-md-3">{{ form_widget(formRecherche.categorie) }}</div>
+                    <div class="col-md-2">{{ form_widget(formRecherche.prixMini) }}</div>
+                    <div class="col-md-2">{{ form_widget(formRecherche.prixMaxi) }}</div>
                 </div>
 
                 <div

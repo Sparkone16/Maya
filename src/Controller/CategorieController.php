@@ -13,19 +13,24 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Knp\Component\Pager\PaginatorInterface;
 
 
 final class CategorieController extends AbstractController
 {
     #[Route('/categorie', name: 'app_categorie', methods: ['GET'])]
-    public function index(CategorieRepository $repository): Response
+    public function index(Request $request, CategorieRepository $repository, PaginatorInterface $paginator ): Response
     {
         // créer l'objet et le formulaire de création
         $categorie = new Categorie();
         $formCreation = $this->createForm(CategorieType::class, $categorie);
 
         // lire les catégories
-        $lesCategories = $repository->findAll();
+        $lesCategories = $paginator->paginate(
+            $repository->findAll(),
+            $request->query->getint('page', 1),
+            5
+        );
         return $this->render('categorie/index.html.twig', [
             'formCreation' => $formCreation->createView(),
             'lesCategories' => $lesCategories,
