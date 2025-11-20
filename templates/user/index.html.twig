@@ -51,8 +51,10 @@
 					{% endfor %}
 				</tbody>
 			</table>
-			<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_user_new') }}" title="Créer nouveau utilisateur">
-				<i class="fa fa-plus"></i>
+			<form>
+				<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_user_new') }}" title="Créer nouveau utilisateur">
+					<i class="fa fa-plus"></i>
+			</form>
 				Créer nouveau</button>
 			<div class="navigation">
 				{{ knp_pagination_render(users) }}
