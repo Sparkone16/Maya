@@ -42,13 +42,22 @@ final class ProduitController extends AbstractController
                 $produitRecherche->setCategorie($categorie);
                 $formRecherche->get('categorie')->setData($categorie);
             }
-            $data = $session->get("ProduitCriteres");
-            $session->set('ProduitCriteres', [
-                'libelle' => $data['libelle'],
-                'prixMini' => $data['prixMini'],
-                'prixMaxi' => $data['prixMaxi'],
-                'categorieId' => $request->query->get('categorie')
-            ]);
+            if($session->has('ProduitCriteres')){
+                $data = $session->get("ProduitCriteres");
+                $session->set('ProduitCriteres', [
+                    'libelle' => $data['libelle'],
+                    'prixMini' => $data['prixMini'],
+                    'prixMaxi' => $data['prixMaxi'],
+                    'categorieId' => $request->query->get('categorie')
+                ]);
+            } else {
+                $session->set('ProduitCriteres', [
+                    'libelle' => null,
+                    'prixMini' => null,
+                    'prixMaxi' => null,
+                    'categorieId' => $request->query->get('categorie')
+                ]);
+            }
         }
         $formRecherche->handleRequest($request);
         if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
