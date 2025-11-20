@@ -15,6 +15,10 @@ class RecetteType extends AbstractType
     {
         $builder
             ->add('nom')
+            ->add('description')
+            ->add('tempsPreparation')
+            ->add('tempsCuisson')
+            ->add('ingredient')
             ->add('produits', EntityType::class, [
                 'class' => Produit::class,
                 'choice_label' => 'libelle',

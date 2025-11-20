@@ -1,20 +1,26 @@
 <div
-    class="container-fluid contenu col-md-10">
+    class="container-fluid contenu col-md-8">
 
     {# -- formulaire recette -- #}
     {{ form_start(form) }}
 
-    <div class="row">
+    <div class="row justify-content-center">
         <div class="col-md-5">{{ form_row(form.nom) }}</div>
-        <div class="col-md-2"></div>
-        <div class="col-md-5 col-form-label">{{ form_row(form.produits) }}</div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5">{{ form_row(form.description) }}</div>
     </div>
-
+    <div class="row justify-content-center">
+        <div class="col-md-3">{{ form_row(form.tempsPreparation) }}</div>
+        <div class="col-md-3">{{ form_row(form.tempsCuisson) }}</div>
+    </div>
     <div class="row">
+        <div class="col-md-5 col-form-label">{{ form_row(form.produits) }}</div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5 col-form-label">{{ form_row(form.ingredient) }}</div>
         <div>{{ form_rest(form) }}</div>
     </div>
 
-    <div class="row">
+    <div class="row justify-content-center">
         <div class="col-md-3"></div>
         <div class="col-md-2">
             <button class="btn btn-primary btn-xs">

@@ -15,6 +15,10 @@
                 <tr class="bg-entete">
                     <th class="col-md-1">Identifiant</th>
                     <th class="col-md-1">Nom</th>
+                    <th class="col-md-1">Description</th>
+                    <th class="col-md-1">Temps de préparation</th>
+                    <th class="col-md-1">Temps de cuisson</th>
+                    <th class="col-md-1">Ingredients</th>
                     <th class="col-md-1">Produits</th>
                     <th class="col-md-2">Actions<span class="pull-right" ><a href="{{ path('app_recette_ajouter')}}" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> Ajouter nouveau recette</a></span></th>
                 </tr>
@@ -25,6 +29,10 @@
                     <tr>
                         <td>{{ recette.id }}</td>
                         <td>{{ recette.nom }}</td>
+                        <td>{{ recette.description }}</td>
+                        <td>{{ recette.tempsPreparation }}</td>
+                        <td>{{ recette.tempsCuisson }}</td>
+                        <td>{{ recette.ingredient }}</td>
                         <td>{% for key, produit in recette.produits %}
                             {{ produit.getLibelle() }},
                         {% endfor %}</td>
