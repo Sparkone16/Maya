@@ -67,7 +67,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this;
     }
 
-
     /**
      * A visual identifier that represents this user.
      *

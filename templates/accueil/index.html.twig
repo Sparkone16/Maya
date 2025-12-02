@@ -14,9 +14,9 @@
 			<div class="row gap-1 row-gap-5 justify-content-center ">
 				{% for key, categorie in lesCategories %}
 					<div class="col-md-3">
-						<a href="{{ path('app_produit', { categorie: categorie.id }) }}" class="text-decoration-none text-dark">
+						<a href="{{ vich_uploader_asset(categorie, 'imageFichier') }}" class="text-decoration-none text-dark">
 							<div class="card">
-								{% if categorie.imgFilename == null %}
+								{% if categorie.imageFichier == null %}
 									<div class="card-header"></div>
 								{% else %}
 									<img src="{{ asset('uploads/categorieIMG/' ~ categorie.imgFilename) }}" class="card-img-top" alt="Card image cap">
