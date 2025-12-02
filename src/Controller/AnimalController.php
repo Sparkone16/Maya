@@ -29,8 +29,8 @@ final class AnimalController extends AbstractController
         return $this->render('animal/index.html.twig', [
             'formCreation' => $formCreation->createView(),
             'lesAnimaux' => $lesAnimaux,
-            'idAnimalModif' =>null,
-            'formModification' =>null,
+            'idAnimalModif' => null,
+            'formModification' => null,
         ]);
     }
 
@@ -59,7 +59,7 @@ final class AnimalController extends AbstractController
     // }
 
     #[Route('/animal/ajouter', name: 'app_animal_ajouter', methods: ['POST'])]
-    public function ajouter(Request $request, EntityManagerInterface $entityManager, AnimalRepository $repository): Response
+    public function ajouter(Request $request, PaginatorInterface $paginator, EntityManagerInterface $entityManager, AnimalRepository $repository): Response
     {
         $animal = new Animal();
         $form = $this->createForm(AnimalType::class, $animal);
@@ -74,7 +74,11 @@ final class AnimalController extends AbstractController
         } else {
             // affichage de la liste des animaux avec le formulaire de création et ses erreurs
             // lire les animaux
-            $lesAnimaux = $repository->findAll();
+            $lesAnimaux = $paginator->paginate(
+                $repository->findAll(),
+                $request->query->getint('page', 1),
+                5
+            );
             // rendre la vue
             return $this->render('animal/index.html.twig', [
                 'formCreation' => $form->createView(),
@@ -94,7 +98,7 @@ final class AnimalController extends AbstractController
     }
 
     #[Route('/animal/demandermodification/{id<\d+>}', name: 'app_animal_demandermodification', methods: ['GET'])]
-    public function demanderModification(AnimalRepository $repository, Animal $animalModif): Response
+    public function demanderModification(Request $request, AnimalRepository $repository, PaginatorInterface $paginator, Animal $animalModif): Response
     {
         // créer l'objet et le formulaire de création
         $animal = new Animal();
@@ -104,7 +108,11 @@ final class AnimalController extends AbstractController
         $formModificationView = $this->createForm(AnimalType::class, $animalModif)->createView();
 
         // lire les animaux
-        $lesAnimaux = $repository->findAll();
+        $lesAnimaux = $paginator->paginate(
+            $repository->findAll(),
+            $request->query->getint('page', 1),
+            5
+        );
         return $this->render('animal/index.html.twig', [
             'formCreation' => $formCreation->createView(),
             'lesAnimaux' => $lesAnimaux,
@@ -114,7 +122,7 @@ final class AnimalController extends AbstractController
     }
 
     #[Route('/animal/modifier/{id<\d+>}', name: 'app_animal_modifier', methods: ['POST'])]
-    public function modifier(Animal $animal, Request $request, EntityManagerInterface $entityManager, AnimalRepository $repository): Response
+    public function modifier(Animal $animal, PaginatorInterface $paginator, Request $request, EntityManagerInterface $entityManager, AnimalRepository $repository): Response
     // public function modifier(Animal $animal = null, $id = null, Request $request, EntityManagerInterface $entityManager, AnimalRepository $repository)
     {
         //  Symfony 4 est capable de retrouver l'animal à l'aide de Doctrine ORM directement en utilisant l'id passé dans la route
@@ -137,7 +145,11 @@ final class AnimalController extends AbstractController
             $animal = new Animal();
             $formCreation = $this->createForm(AnimalType::class, $animal);
             // lire les animaux
-            $lesAnimaux = $repository->findAll();
+            $lesAnimaux = $paginator->paginate(
+                $repository->findAll(),
+                $request->query->getint('page', 1),
+                5
+            );
             // rendre la vue
             return $this->render('animal/index.html.twig', [
                 'formCreation' => $formCreation->createView(),
@@ -164,6 +176,4 @@ final class AnimalController extends AbstractController
         }
         return $this->redirectToRoute('app_animal');
     }
-
 }
-    
