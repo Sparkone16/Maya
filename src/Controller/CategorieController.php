@@ -19,7 +19,7 @@ use Knp\Component\Pager\PaginatorInterface;
 final class CategorieController extends AbstractController
 {
     #[Route('/categorie', name: 'app_categorie', methods: ['GET'])]
-    public function index(Request $request, CategorieRepository $repository, PaginatorInterface $paginator ): Response
+    public function index(Request $request, CategorieRepository $repository, PaginatorInterface $paginator): Response
     {
         // créer l'objet et le formulaire de création
         $categorie = new Categorie();
@@ -41,7 +41,7 @@ final class CategorieController extends AbstractController
 
 
     #[Route('/categorie/ajouter', name: 'app_categorie_ajouter', methods: ['POST'])]
-    public function ajouter(Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository): Response
+    public function ajouter(Request $request, PaginatorInterface $paginator, EntityManagerInterface $entityManager, CategorieRepository $repository): Response
 
     {
         //  $categorie objet de la classe Categorie, il contiendra les valeurs saisies dans les champs après soumission du formulaire.
@@ -74,7 +74,11 @@ final class CategorieController extends AbstractController
         } else {
             // affichage de la liste des catégories avec le formulaire de création et ses erreurs
             // lire les catégories
-            $lesCategories = $repository->findAll();
+            $lesCategories = $paginator->paginate(
+                $repository->findAll(),
+                $request->query->getint('page', 1),
+                5
+            );
             // rendre la vue
             return $this->render('categorie/index.html.twig', [
                 'formCreation' => $form->createView(),
@@ -86,7 +90,7 @@ final class CategorieController extends AbstractController
     }
 
     #[Route('/categorie/demandermodification/{id<\d+>}', name: 'app_categorie_demandermodification', methods: ['GET'])]
-    public function demanderModification(CategorieRepository $repository, Categorie $categorieModif, Request $request): Response
+    public function demanderModification(CategorieRepository $repository, PaginatorInterface $paginator, Categorie $categorieModif, Request $request): Response
     {
         if ($this->isCsrfTokenValid('action-item' . $categorieModif->getId(), $request->get('_token'))) {
             // créer l'objet et le formulaire de création
@@ -97,7 +101,12 @@ final class CategorieController extends AbstractController
             $formModificationView = $this->createForm(CategorieType::class, $categorieModif)->createView();
 
             // lire les catégories
-            $lesCategories = $repository->findAll();
+            // Pas de changement majeur nécessaire ici, juste pour confirmer :
+            $lesCategories = $paginator->paginate(
+                $repository->findAll(),
+                $request->query->getInt('page', 1), // Cela capture bien la page envoyée par le bouton Twig
+                5
+            );
             return $this->render('categorie/index.html.twig', [
                 'formCreation' => $formCreation->createView(),
                 'lesCategories' => $lesCategories,
@@ -106,35 +115,47 @@ final class CategorieController extends AbstractController
             ]);
         }
         return $this->redirectToRoute('app_categorie');
-
     }
 
     #[Route('/categorie/modifier/{id<\d+>}', name: 'app_categorie_modifier', methods: ['POST'])]
-    public function modifier(Categorie $categorie, SluggerInterface $slugger, Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository, #[Autowire('%kernel.project_dir%/public/uploads/categorieIMG')] string $imgsDirectory): Response
-    // public function modifier(Categorie $categorie = null, $id = null, Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository)
-    {
-        //  Symfony 4 est capable de retrouver la catégorie à l'aide de Doctrine ORM directement en utilisant l'id passé dans la route
+    public function modifier(
+        Categorie $categorie,
+        SluggerInterface $slugger,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        CategorieRepository $repository,
+        PaginatorInterface $paginator // AJOUT : Nécessaire pour le cas d'erreur
+    ): Response {
+        // 1. On récupère le numéro de page actuel (ou 1 par défaut)
+        $page = $request->query->getInt('page', 1);
+
         $form = $this->createForm(CategorieType::class, $categorie);
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
-            // if ($form->isSubmitted() && $form->isValid()) {
-            // va effectuer la requête d'UPDATE en base de données
-            // pas besoin de "persister" l'entité car l'objet a déjà été retrouvé à partir de Doctrine ORM.
+
+        if ($form->isSubmitted() && $form->isValid()) { // J'ai remis le isValid() c'est plus sûr
+
             $entityManager->flush();
             $this->addFlash(
                 'success',
                 'La catégorie ' . $categorie->getLibelle() . ' a été modifiée.'
             );
-            // rediriger vers l'affichage des catégories qui comprend le formulaire pour l"ajout d'une nouvelle catégorie
-            return $this->redirectToRoute('app_categorie');
+
+            // 2. MODIFICATION ICI : On redirige en gardant le paramètre page
+            return $this->redirectToRoute('app_categorie', ['page' => $page]);
         } else {
-            // affichage de la liste des catégories avec le formulaire de modification et ses erreurs
-            // créer l'objet et le formulaire de création
-            $categorie = new Categorie();
-            $formCreation = $this->createForm(CategorieType::class, $categorie);
-            // lire les catégories
-            $lesCategories = $repository->findAll();
-            // rendre la vue
+            // Cas d'erreur : on doit réafficher la page actuelle avec les erreurs
+
+            $categorieNew = new Categorie();
+            $formCreation = $this->createForm(CategorieType::class, $categorieNew);
+
+            // 3. CORRECTION ICI : On utilise le paginator comme dans index()
+            // Au lieu de $repository->findAll() tout seul qui casse l'affichage
+            $lesCategories = $paginator->paginate(
+                $repository->findAll(),
+                $page, // On reste sur la page actuelle
+                5
+            );
+
             return $this->render('categorie/index.html.twig', [
                 'formCreation' => $formCreation->createView(),
                 'lesCategories' => $lesCategories,
@@ -146,8 +167,11 @@ final class CategorieController extends AbstractController
 
 
     #[Route('/categorie/supprimer/{id<\d+>}', name: 'app_categorie_supprimer')]
-    public function supprimer(Categorie $categorie, Request $request, EntityManagerInterface $entityManager)
+    public function supprimer(Categorie $categorie, Request $request, EntityManagerInterface $entityManager): Response
     {
+        // 1. On récupère le numéro de page
+        $page = $request->query->getInt('page', 1);
+
         // vérifier le token
         if ($this->isCsrfTokenValid('action-item' . $categorie->getId(), $request->get('_token'))) {
             if ($categorie->getProduits()->count() > 0) {
@@ -155,7 +179,8 @@ final class CategorieController extends AbstractController
                     'error',
                     'Il existe des produits dans la catégorie ' . $categorie->getLibelle() . ', elle ne peut pas être supprimée.'
                 );
-                return $this->redirectToRoute('app_categorie');
+                // On redirige avec la page
+                return $this->redirectToRoute('app_categorie', ['page' => $page]);
             }
             // supprimer la catégorie
             $entityManager->remove($categorie);
@@ -165,6 +190,8 @@ final class CategorieController extends AbstractController
                 'La catégorie ' . $categorie->getLibelle() . ' a été supprimée.'
             );
         }
-        return $this->redirectToRoute('app_categorie');
+
+        // 2. MODIFICATION ICI : redirection vers la bonne page
+        return $this->redirectToRoute('app_categorie', ['page' => $page]);
     }
 }

@@ -63,12 +63,18 @@
 								<!-- formulaire pour demander la modification ou la suppression -->
 								<td>
 									<form>
+										<input type="hidden" name="page" value="{{ app.request.query.get('page', 1) }}">
+
 										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_categorie_demandermodification', {'id' : categorie.id }) }}" title="Modifier">
 											<i class="fa fa-pencil"></i>
-											Modifier</button>
+											Modifier
+										</button>
+
 										<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_categorie_supprimer', {'id' : categorie.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');">
 											<i class="fa fa-trash-o "></i>
-											Supprimer</button>
+											Supprimer
+										</button>
+
 										<input type="hidden" name="_token" value="{{ csrf_token('action-item' ~ categorie.id) }}">
 									</form>
 								</td>
@@ -85,14 +91,15 @@
 								</td>
 
 								<td class="col-md-4">
-									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_categorie_modifier', {'id' : categorie.id }) }}" title="Enregistrer">
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_categorie_modifier', { 'id' : categorie.id, 'page': app.request.query.get('page', 1) }) }}" title="Enregistrer">
 										<i class="fa fa-save"></i>
-										Enregistrer</button>
+										Enregistrer
+									</button>
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
 									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
-										<a href="{{ path('app_categorie') }}">
+										<a href="{{ path('app_categorie', {'page': app.request.query.get('page', 1)}) }}">
 											<i class="fa fa-undo"></i>
 											Annuler
 										</a>
