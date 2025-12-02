@@ -14,12 +14,12 @@
 			<div class="row gap-1 row-gap-5 justify-content-center ">
 				{% for key, categorie in lesCategories %}
 					<div class="col-md-3">
-						<a href="{{ vich_uploader_asset(categorie, 'imageFichier') }}" class="text-decoration-none text-dark">
+						<a href="{{ path('app_produit', { categorie: categorie.id }) }}" class="text-decoration-none text-dark">
 							<div class="card">
-								{% if categorie.imageFichier == null %}
+								{% if categorie.imageNom == null %}
 									<div class="card-header"></div>
 								{% else %}
-									<img src="{{ asset('uploads/categorieIMG/' ~ categorie.imgFilename) }}" class="card-img-top" alt="Card image cap">
+									<img src="{{ vich_uploader_asset(categorie, 'imageFichier') }}" class="card-img-top img-fluid" alt="Card image cap">
 								{% endif %}
 								<div class="card-body">
 									<h5 class="card-title">{{ categorie.libelle }}</h5>
