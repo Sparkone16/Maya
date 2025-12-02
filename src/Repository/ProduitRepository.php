@@ -67,32 +67,5 @@ class ProduitRepository extends ServiceEntityRepository
        return $query;
    }
 
-
-    /**
-     * @return Query
-     */
-    public function findAllByCriteria(ProduitRecherche $produitRecherche): Query
-    {
-        // le "p" est un alias utilisé dans la requête
-        $qb = $this->createQueryBuilder('p')
-            ->orderBy('p.libelle', 'ASC');
-
-        if ($produitRecherche->getLibelle()) {
-            $qb->andWhere('p.libelle LIKE :libelle')
-                ->setParameter('libelle', $produitRecherche->getLibelle().'%');
-        }
-
-        if ($produitRecherche->getPrixMini()) {
-            $qb->andWhere('p.prix >= :prixMini')
-                ->setParameter('prixMini', $produitRecherche->getPrixMini());
-        }
-
-        if ($produitRecherche->getPrixMaxi()) {
-            $qb->andWhere('p.prix < :prixMaxi')
-                ->setParameter('prixMaxi', $produitRecherche->getPrixMaxi());
-        }
-
-        return $qb->getQuery();
-    }
 }
     
