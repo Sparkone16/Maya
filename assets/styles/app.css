@@ -83,3 +83,11 @@ h1 {
   line-height: 40px;
   padding: 10px;
  }
+
+ /* Cible l'image à l'intérieur du widget Vich */
+.vich-image img {
+    max-width: 100%;       /* Exemple */
+    border-radius: 8px;    /* Exemple */
+    border: 1px solid #ddd;
+    /* Ajoutez vos styles ici */
+}
