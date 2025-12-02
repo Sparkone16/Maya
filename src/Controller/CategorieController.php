@@ -41,7 +41,7 @@ final class CategorieController extends AbstractController
 
 
     #[Route('/categorie/ajouter', name: 'app_categorie_ajouter', methods: ['POST'])]
-    public function ajouter(Request $request, SluggerInterface $slugger, EntityManagerInterface $entityManager, CategorieRepository $repository, #[Autowire('%kernel.project_dir%/public/uploads/categorieIMG')] string $imgsDirectory): Response
+    public function ajouter(Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository): Response
 
     {
         //  $categorie objet de la classe Categorie, il contiendra les valeurs saisies dans les champs après soumission du formulaire.
@@ -58,25 +58,6 @@ final class CategorieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-
-            $imgFile = $form->get('img')->getData();
-            if ($imgFile) {
-                $originalFilename = pathinfo($imgFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imgFile->guessExtension();
-
-                // Move the file to the directory where brochures are stored
-                try {
-                    $imgFile->move($imgsDirectory, $newFilename);
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
-                }
-
-                // updates the 'brochureFilename' property to store the PDF file name
-                // instead of its contents
-                $categorie->setImgFilename($newFilename);
-            }
             // c'est le cas du retour du formulaire
             //         l'objet $categorie a été automatiquement "hydraté" par Doctrine
             // dire à Doctrine que l'objet sera (éventuellement) persisté
@@ -95,7 +76,7 @@ final class CategorieController extends AbstractController
             // lire les catégories
             $lesCategories = $repository->findAll();
             // rendre la vue
-            return $this->render('categorie/indexAdmin.html.twig', [
+            return $this->render('categorie/index.html.twig', [
                 'formCreation' => $form->createView(),
                 'lesCategories' => $lesCategories,
                 'formModification' => null,
@@ -117,7 +98,7 @@ final class CategorieController extends AbstractController
 
             // lire les catégories
             $lesCategories = $repository->findAll();
-            return $this->render('categorie/indexAdmin.html.twig', [
+            return $this->render('categorie/index.html.twig', [
                 'formCreation' => $formCreation->createView(),
                 'lesCategories' => $lesCategories,
                 'formModification' => $formModificationView,
@@ -138,24 +119,6 @@ final class CategorieController extends AbstractController
         if ($form->isSubmitted()) {
             // if ($form->isSubmitted() && $form->isValid()) {
             // va effectuer la requête d'UPDATE en base de données
-            $imgFile = $form->get('img')->getData();
-            if ($imgFile) {
-                $originalFilename = pathinfo($imgFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imgFile->guessExtension();
-
-                // Move the file to the directory where brochures are stored
-                try {
-                    $imgFile->move($imgsDirectory, $newFilename);
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
-                }
-
-                // updates the 'brochureFilename' property to store the PDF file name
-                // instead of its contents
-                $categorie->setImgFilename($newFilename);
-            }
             // pas besoin de "persister" l'entité car l'objet a déjà été retrouvé à partir de Doctrine ORM.
             $entityManager->flush();
             $this->addFlash(
@@ -172,7 +135,7 @@ final class CategorieController extends AbstractController
             // lire les catégories
             $lesCategories = $repository->findAll();
             // rendre la vue
-            return $this->render('categorie/indexAdmin.html.twig', [
+            return $this->render('categorie/index.html.twig', [
                 'formCreation' => $formCreation->createView(),
                 'lesCategories' => $lesCategories,
                 'formModification' => $form->createView(),
