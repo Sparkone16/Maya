@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class AnimalType extends AbstractType
 {
@@ -21,6 +22,9 @@ class AnimalType extends AbstractType
                 'class' => RaceAnimal::class,
                 'choice_label' => 'intitule',
                 'placeholder' => 'Choisissez une race',
+            ])
+            ->add('imageFichier', VichImageType::class, [
+                'required' => false,
             ])
         ;
     }
