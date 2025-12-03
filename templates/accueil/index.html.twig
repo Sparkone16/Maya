@@ -10,6 +10,8 @@
 			Accueil
 		</h1>
 		{{ include('messages.html.twig') }}
+
+		{# CONTENU DES CATÉGORIES (Position actuelle) #}
 		<div class="contenu">
 			<div class="row gap-1 row-gap-5 justify-content-center ">
 				{% for key, categorie in lesCategories %}
@@ -18,7 +20,7 @@
 							<div class="card">
 								{% if categorie.imageNom == null %}
 									<div class="card-header"></div>
-								{% else %}"
+								{% else %}
 									<img src="{{ vich_uploader_asset(categorie, 'imageFichier') }}" class="card-img-top img-fluid" alt="Card image cap">
 								{% endif %}
 								<div class="card-body">
@@ -30,6 +32,61 @@
 				{% endfor %}
 			</div>
 		</div>
+		{# FIN DU CONTENU DES CATÉGORIES #}
+
+		{# Section pour les événements mis en avant (Déplacée APRES les catégories) #}
+		<h1 class="mt-5 mb-4 text-center text-dark">Événements</h1>
+		<div class="contenu">
+			<div class="row mb-5 justify-content-center">
+				<div class="col-md-5 text-center">
+					<h3>Prochains Événements ({{prochainsEvenements | length}})</h3>
+					<div class="card shadow">
+						<div class="card-body p-0">
+							{% if prochainsEvenements is empty %}
+								<p class="p-3 mb-0">Aucun événement futur n'est programmé pour le moment.</p>
+							{% else %}
+								<ul class="list-group list-group-flush">
+									{% for evenement in prochainsEvenements %}
+										<a href="{{path('app_evenement')}}" class="text-decoration-none">
+											<li class="list-group-item d-flex justify-content-between align-items-center">
+												<strong>{{ evenement.titre }}</strong>
+												<span class="badge bg-success rounded-pill">{{ evenement.date|date('d/m/Y') }}
+													à
+													{{ evenement.heureDebut|date('H:i') }}</span>
+											</li>
+										</a>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="col-md-5 text-center">
+					<h3>Derniers Événements Passés ({{derniersEvenementsPasses | length}})</h3>
+					<div class="card shadow">
+						<div class="card-body p-0">
+							{% if derniersEvenementsPasses is empty %}
+								<p class="p-3 mb-0">Aucun événement passé n'a été trouvé.</p>
+							{% else %}
+								<ul class="list-group list-group-flush">
+									{% for evenement in derniersEvenementsPasses %}
+										<a href="{{path('app_evenement')}}" class="text-decoration-none">
+											<li class="list-group-item d-flex justify-content-between align-items-center list-group-item-light">
+												{{ evenement.titre }}
+												<span class="badge bg-danger rounded-pill">{{ evenement.date|date('d/m/Y') }}
+													à
+													{{ evenement.heureDebut|date('H:i') }}</span>
+											</li>
+										</a>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{# Fin de la section événements #}
+
 	</div>
-	<!--fin div col-md-6-->
 {% endblock %}

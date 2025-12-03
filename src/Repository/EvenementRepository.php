@@ -15,7 +15,38 @@ class EvenementRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Evenement::class);
     }
+/**
+     * Récupère les 3 derniers événements dont la date est passée.
+     * @return Evenement[] Returns an array of Evenement objects
+     */
+    public function findLastThreePastEvents(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.date < :now')
+            ->setParameter('now', new \DateTimeImmutable())
+            ->orderBy('e.date', 'DESC')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
+    /**
+     * Récupère les 3 prochains événements dont la date est aujourd'hui ou dans le futur.
+     * @return Evenement[] Returns an array of Evenement objects
+     */
+    public function findNextThreeUpcomingEvents(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.date >= :now')
+            ->setParameter('now', new \DateTimeImmutable())
+            ->orderBy('e.date', 'ASC')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+}
 //    /**
 //     * @return Evenement[] Returns an array of Evenement objects
 //     */
@@ -40,4 +71,4 @@ class EvenementRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-}
+
