@@ -120,7 +120,6 @@ final class CategorieController extends AbstractController
     #[Route('/categorie/modifier/{id<\d+>}', name: 'app_categorie_modifier', methods: ['POST'])]
     public function modifier(
         Categorie $categorie,
-        SluggerInterface $slugger,
         Request $request,
         EntityManagerInterface $entityManager,
         CategorieRepository $repository,
