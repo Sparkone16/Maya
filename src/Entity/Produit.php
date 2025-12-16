@@ -97,6 +97,10 @@ class Produit
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $imageDateMaj = null;
 
+    #[ORM\ManyToOne(inversedBy: 'lesProduits')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Conditionnement $conditionnement = null;
+
 
     public function getId(): ?int
     {
@@ -297,6 +301,18 @@ class Produit
     public function getImageTaille(): ?int
     {
         return $this->imageTaille;
+    }
+
+    public function getConditionnement(): ?Conditionnement
+    {
+        return $this->conditionnement;
+    }
+
+    public function setConditionnement(?Conditionnement $conditionnement): static
+    {
+        $this->conditionnement = $conditionnement;
+
+        return $this;
     }
 
 

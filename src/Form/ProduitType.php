@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Categorie;
 use App\Entity\Produit;
+use App\Entity\Conditionnement;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -52,6 +53,13 @@ class ProduitType extends AbstractType
             ])
             ->add('imageFichier', VichImageType::class, [
                 'required' => false,
+            ])
+            ->add('conditionnement', EntityType::class, [
+                'label' => 'Conditionnement',
+                'class' => Conditionnement::class,
+                'choice_label' => 'libelle',
+                'multiple' => false,
+                'expanded' => false
             ])
 
 //            ->add('recettes')    // on ne gère pas les recettes dans la gestion des produits
