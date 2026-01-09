@@ -1,43 +1,64 @@
 <div
-    class="container-fluid contenu col-md-8">
+	class="container-fluid contenu col-md-8">
 
-    {# -- formulaire recette -- #}
-    {{ form_start(form) }}
+	{# -- formulaire recette -- #}
+	{{ form_start(form) }}
 
-    <div class="row justify-content-center">
-        <div class="col-md-5">{{ form_row(form.nom) }}</div>
-        <div class="col-md-1"></div>
-        <div class="col-md-5">{{ form_row(form.description) }}</div>
-    </div>
-    <div class="row justify-content-center">
-        <div class="col-md-3">{{ form_row(form.tempsPreparation) }}</div>
-        <div class="col-md-3">{{ form_row(form.tempsCuisson) }}</div>
-    </div>
-    <div class="row">
-        <div class="col-md-5 col-form-label">{{ form_row(form.produits) }}</div>
-        <div class="col-md-1"></div>
-        <div class="col-md-5 col-form-label">{{ form_row(form.ingredient) }}</div>
-        <div>{{ form_rest(form) }}</div>
-    </div>
+	<div class="row justify-content-center align-items-center">
 
-    <div class="row justify-content-center">
-        <div class="col-md-3"></div>
-        <div class="col-md-2">
-            <button class="btn btn-primary btn-xs">
-                <i class="fa fa-save"></i>
-                {{ button|default('Enregistrer') }}</button>
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-info btn-xs" type="reset" title="Effacer la saisie">
-                <i class="fa fa-eraser">
-                    Annuler</i>
-            </button>
-        </div>
-        <div class="col-md-2">
-            <a href="{{ path('app_recette')}}" class="btn btn-secondary btn-xs">
-                <i class="fa fa-undo"></i>
-                Retour liste</a>
-        </span>
-    </div>
-    {{ form_end(form) }}
+		<div class="col-md-4">
+			{{ form_row(form.nom) }}
+		</div>
+
+		<div class="col-md-2">
+			<div class="d-flex align-items-center justify-content-center">
+				{{ form_widget(form.estSucree, {'attr': {'class': 'form-check-input mt-3'}}) }}
+				{{ form_label(form.estSucree, 'Est sucrée', {'label_attr': {'class': 'mb-0 ms-2'}}) }}&nbsp(Decochez si salée)
+                
+			</div>
+		</div>
+
+		<div class="col-md-2">
+			<div class="d-flex align-items-center justify-content-center">
+				{{ form_widget(form.estTraditionnelle, {'attr': {'class': 'form-check-input mt-3'}}) }}
+				{{ form_label(form.estTraditionnelle, null, {'label_attr': {'class': 'mb-0 ms-2'}}) }}
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			{{ form_row(form.description) }}
+		</div>
+
+	</div>
+	<div class="row justify-content-center">
+		<div class="col-md-3">{{ form_row(form.tempsPreparation) }}</div>
+		<div class="col-md-3">{{ form_row(form.tempsCuisson) }}</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4 col-form-label">{{ form_row(form.produits) }}</div>
+		<div class="col-md-3 col-form-label">{{ form_row(form.imageFichier) }}</div>
+		<div class="col-md-4 col-form-label">{{ form_row(form.ingredient) }}</div>
+		<div>{{ form_rest(form) }}</div>
+	</div>
+
+	<div class="row justify-content-center">
+		<div class="col-md-3"></div>
+		<div class="col-md-2">
+			<button class="btn btn-primary btn-xs">
+				<i class="fa fa-save"></i>
+				{{ button|default('Enregistrer') }}</button>
+		</div>
+		<div class="col-md-2">
+			<button class="btn btn-info btn-xs" type="reset" title="Effacer la saisie">
+				<i class="fa fa-eraser">
+					Annuler</i>
+			</button>
+		</div>
+		<div class="col-md-2">
+			<a href="{{ path('app_recette')}}" class="btn btn-secondary btn-xs">
+				<i class="fa fa-undo"></i>
+				Retour liste</a>
+		</span>
+	</div>
+	{{ form_end(form) }}
 </div>

@@ -17,6 +17,21 @@ class CategorieRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Categorie::class);
     }
+    public function findAllWithStats(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select(
+                'c.libelle as name',
+                'COUNT(p.id) as nbProduits',
+                'COALESCE(MIN(p.prix), 0) as prixMin',
+                'COALESCE(MAX(p.prix), 0) as prixMax',
+                'COALESCE(AVG(p.prix), 0) as prixMoyen'
+            )
+            ->leftJoin('c.produits', 'p') // 'produits' est le nom de la relation dans ton entité Categorie
+            ->groupBy('c.id')
+            ->getQuery()
+            ->getResult();
+    }
 
     //    /**
     //     * @return Categorie[] Returns an array of Categorie objects

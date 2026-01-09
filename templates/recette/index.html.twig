@@ -20,6 +20,7 @@
                     <th class="col-md-1">Temps de cuisson</th>
                     <th class="col-md-1">Ingredients</th>
                     <th class="col-md-1">Produits</th>
+                    <th class="col-md-1">Image</th>
                     <th class="col-md-2">Actions<span class="pull-right" ><a href="{{ path('app_recette_ajouter')}}" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> Ajouter nouveau recette</a></span></th>
                 </tr>
                 </thead>
@@ -36,6 +37,7 @@
                         <td>{% for key, produit in recette.produits %}
                             {{ produit.getLibelle() }},
                         {% endfor %}</td>
+                        <td><img class="img-thumbnail img-fluid" src="{{ vich_uploader_asset(recette, 'imageFichier') }}"/></td>
                         <td>
 
                         <!-- formulaire pour demander la modification ou la suppression -->

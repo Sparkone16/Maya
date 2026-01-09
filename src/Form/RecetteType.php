@@ -8,6 +8,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class RecetteType extends AbstractType
 {
@@ -15,10 +17,18 @@ class RecetteType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('description')
             ->add('tempsPreparation')
             ->add('tempsCuisson')
             ->add('ingredient')
+            ->add('description')
+            ->add('estSucree', CheckboxType::class, [
+                'label' => 'Est sucrée',  // <--- C'est ici qu'on définit le nom
+                'required' => false,
+            ])
+            ->add('estTraditionnelle')
+            ->add('imageFichier', VichImageType::class, [
+                'required' => false,
+            ])
             ->add('produits', EntityType::class, [
                 'class' => Produit::class,
                 'choice_label' => 'libelle',

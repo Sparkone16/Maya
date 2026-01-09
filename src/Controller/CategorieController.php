@@ -201,64 +201,10 @@ final class CategorieController extends AbstractController
     }
 
     #[Route('/categorie/statistique', name: 'app_categorie_statistique')]
-    public function statistique(CategorieRepository $repository, ProduitRepository $repositoryProduit): Response
+    public function statistique(CategorieRepository $repository): Response
     {
-        $lesCategories = $repository->findAll();
-        $tbCategoriesDesc = [];
-
-        foreach ($lesCategories as $uneCategorie) {
-            $produitRecherche = new ProduitRecherche();
-            $produitRecherche->setCategorie($uneCategorie);
-
-            // On garde l'hydratation en tableau
-            $produitResultat = $repositoryProduit->findAllByCriteria($produitRecherche)
-                ->execute(array(), Query::HYDRATE_ARRAY);
-
-            $nbProduits = count($produitResultat);
-
-            // GESTION DU CAS : Catégorie vide (0 produit)
-            if ($nbProduits === 0) {
-                $tbCategoriesDesc[] = [
-                    "name" => $uneCategorie->getLibelle(),
-                    "nbProduits" => 0,
-                    "prixMin" => 0,
-                    "prixMax" => 0,
-                    "prixMoyen" => 0
-                ];
-                continue; // On passe à la catégorie suivante
-            }
-
-            // Initialisation avec les valeurs du premier produit (syntaxe tableau !)
-            $prixMin = $produitResultat[0]['prix'];
-            $prixMax = $produitResultat[0]['prix'];
-            $sommePrix = 0;
-
-            foreach ($produitResultat as $unProduit) {
-                // CORRECTION ICI : Utilisation des crochets [] au lieu de ->getPrix()
-                $prixActuel = $unProduit['prix'];
-
-                if ($prixActuel < $prixMin) {
-                    $prixMin = $prixActuel;
-                }
-                if ($prixActuel > $prixMax) {
-                    $prixMax = $prixActuel;
-                }
-                $sommePrix += $prixActuel;
-            }
-
-            $unTabCateg = [
-                "name" => $uneCategorie->getLibelle(),
-                "nbProduits" => $nbProduits,
-                "prixMin" => $prixMin,
-                "prixMax" => $prixMax,
-                "prixMoyen" => round($sommePrix / $nbProduits, 2) // Plus de risque de division par zéro grâce au if plus haut
-            ];
-
-            $tbCategoriesDesc[] = $unTabCateg;
-        }
-
         return $this->render('categorie/statistique.html.twig', [
-            'tbCategorieDesc' => $tbCategoriesDesc
+            'stats' => $repository->findAllWithStats()
         ]);
     }
 }

@@ -45,7 +45,7 @@
 							{{ form_errors(formCreation.valeur) }}</td>
                         <td class="col-md-2"></td>
 						<td class="col-md-2">
-							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_conditionnement_ajouter') }}" title="Enregistrer nouvelle conditionnement">
+							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_conditionnement_ajouter') }}" title="Enregistrer nouvelle conditionnement" onclick="windows.location.reload()">
 								<i class="fa fa-save"></i>
 								Enregistrer</button>
 							<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
@@ -71,7 +71,7 @@
 									<form>
 										<input type="hidden" name="page" value="{{ app.request.query.get('page', 1) }}">
 
-										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_conditionnement_demandermodification', {'id' : conditionnement.id }) }}" title="Modifier">
+										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_conditionnement_demandermodification', {'id' : conditionnement.id }) }}" title="Modifier" onclick="windows.location.reload()">
 											<i class="fa fa-pencil"></i>
 											Modifier
 										</button>
@@ -99,14 +99,14 @@
                                 <td>{{ conditionnement.getLesProduits|length }}</td>
 
 								<td class="col-md-4">
-									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_conditionnement_modifier', { 'id' : conditionnement.id, 'page': app.request.query.get('page', 1) }) }}" title="Enregistrer">
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_conditionnement_modifier', { 'id' : conditionnement.id, 'page': app.request.query.get('page', 1) }) }}" title="Enregistrer" onclick="windows.location.reload()">
 										<i class="fa fa-save"></i>
 										Enregistrer
 									</button>
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
-									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
+									<button class="btn btn-warning btn-sm" type="button" title="Annuler" onclick="windows.location.reload()">
 										<a href="{{ path('app_conditionnement', {'page': app.request.query.get('page', 1)}) }}">
 											<i class="fa fa-undo"></i>
 											Annuler
