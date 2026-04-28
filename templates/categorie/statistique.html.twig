@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques Catégories{% endblock %}
+
+{% block body %}
+<div class="col-md-7 contenu-blanc">
+    <h1>
+        {% set total = stats|length %}
+        {{ total == 0 ? "Il n'y a pas de catégorie" : (total == 1 ? "La catégorie" : "Les " ~ total ~ " catégories") }}
+    </h1>
+
+    {{ include('messages.html.twig') }}
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="bg-entete">
+                <tr>
+                    <th>Nom</th>
+                    <th>Produits</th>
+                    <th>Prix Min</th>
+                    <th>Prix Max</th>
+                    <th>Prix Moyen</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in stats %}
+                    <tr>
+                        <td>{{ s.name }}</td>
+                        <td>{{ s.nbProduits }}</td>
+                        <td>{{ s.prixMin|number_format(2, ',', ' ') }} €</td>
+                        <td>{{ s.prixMax|number_format(2, ',', ' ') }} €</td>
+                        <td>{{ s.prixMoyen|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5" class="text-center">Aucune donnée</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -58,7 +58,7 @@
 						<td class="col-md-1">{{ form_widget(formCreation.salaireHoraire) }}
 							{{ form_errors(formCreation.salaireHoraire) }}</td>
 						<td class="col-md-2">
-							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_saisonnier_ajouter') }}" title="Enregistrer nouveau saisonnier">
+							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_saisonnier_ajouter') }}" title="Enregistrer nouveau saisonnier" onclick="windows.location.reload()">
 								<i class="fa fa-save"></i>
 								Enregistrer</button>
 							<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
@@ -86,7 +86,7 @@
 								<!-- formulaire pour demander la modification ou la suppression -->
 								<td>
 									<form>
-										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_saisonnier_demandermodification', {'id' : saisonnier.id }) }}" title="Modifier">
+										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_saisonnier_demandermodification', {'id' : saisonnier.id }) }}" title="Modifier" onclick="windows.location.reload()">
 											<i class="fa fa-pencil"></i>
 											Modifier</button>
 										<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_saisonnier_supprimer', {'id' : saisonnier.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cette saisonnier ?');">
@@ -118,13 +118,13 @@
 								<td>{{ form_widget(formModification.salaireHoraire) }}
 									{{ form_errors(formModification.salaireHoraire) }}</td>
 								<td class="col-md-4">
-									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_saisonnier_modifier', {'id' : saisonnier.id }) }}" title="Enregistrer">
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_saisonnier_modifier', {'id' : saisonnier.id }) }}" title="Enregistrer" onclick="windows.location.reload()">
 										<i class="fa fa-save"></i>
 										Enregistrer</button>
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
-									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
+									<button class="btn btn-warning btn-sm" type="button" title="Annuler" onclick="windows.location.reload()">
 										<a href="{{ path('app_saisonnier') }}">
 											<i class="fa fa-undo"></i>
 											Annuler

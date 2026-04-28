@@ -90,7 +90,7 @@
 						<td class="col-md-1">{{ form_widget(formCreation.dateEntreeRel) }}
 							{{ form_errors(formCreation.dateEntreeRel) }}</td>
 						<td class="col-md-2">
-							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_client_ajouter')}}" title="Enregistrer nouveau client">
+							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_client_ajouter')}}" title="Enregistrer nouveau client" onclick="windows.location.reload()">
 								<i class="fa fa-save"></i>
 								Enregistrer</button>
 							<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
@@ -146,13 +146,13 @@
 								<td>{{ form_widget(formModification.dateEntreeRel) }}
 									{{ form_errors(formModification.dateEntreeRel) }}</td>
 								<td class="col-md-4">
-									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_client_modifier', {'id' : client.id }) }}" title="Enregistrer">
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_client_modifier', {'id' : client.id }) }}" title="Enregistrer" onclick="windows.location.reload()">
 										<i class="fa fa-save"></i>
 										Enregistrer</button>
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
-									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
+									<button class="btn btn-warning btn-sm" type="button" title="Annuler" onclick="windows.location.reload()">
 										<a href="{{ path('app_client') }}">
 											<i class="fa fa-undo"></i>
 											Annuler
