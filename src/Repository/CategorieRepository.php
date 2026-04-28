@@ -57,4 +57,10 @@ class CategorieRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findAllOrderByLibelle(): array {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.libelle', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
