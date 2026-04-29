@@ -38,28 +38,28 @@
 				</li>
 			{% endif %}
 			<li class="nav-item ">
-				<a class="nav-link" href="{{ path('app_fournisseur')}}">Fournisseurs</a>
+				<a class="nav-link" href="{{ path('app_fournisseur')}}" onclick="windows.refresh()">Fournisseurs</a>
 			</li>
 			<li class="nav-item ">
-				<a class="nav-link" href="{{ path('app_evenement')}}">Evenements</a>
+				<a class="nav-link" href="{{ path('app_evenement')}}" onclick="windows.location.reload()">Evenements</a>
 			</li>
 			<li class="nav-item ">
-				<a class="nav-link" href="{{ path('app_conditionnement')}}">Conditionnements</a>
+				<a class="nav-link" href="{{ path('app_conditionnement')}}" onclick="windows.location.reload()">Conditionnements</a>
 			</li>
 			<li class="nav-item ">
-				<a class="nav-link" href="{{ path('app_produit')}}">Produits</a>
+				<a class="nav-link" href="{{ path('app_produit')}}" onclick="windows.location.reload()">Produits</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="{{ path('app_recette')}}">Recettes</a>
+				<a class="nav-link" href="{{ path('app_recette')}}" onclick="windows.location.reload()">Recettes</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="{{ path('app_client')}}">Clients</a>
+				<a class="nav-link" href="{{ path('app_client')}}" onclick="windows.location.reload()">Clients</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="{{ path('app_saisonnier')}}">Saisonniers</a>
+				<a class="nav-link" href="{{ path('app_saisonnier')}}" onclick="windows.location.reload()">Saisonniers</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#">Commandes</a>
+				<a class="nav-link" href="#" onclick="windows.location.reload()">Commandes</a>
 			</li>
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown">
@@ -76,9 +76,7 @@
 					Statistiques
 				</a>
 				<ul class="dropdown-menu" aria-labelledby="navbardrop">
-					<li>
-						<a class="dropdown-item" href="{{ path('app_categorie_statistique') }}" onclick="window.location.reload();">Catégorie</a>
-					</li>
+					<a class="dropdown-item" href="{{ path('app_categorie_statproduits') }}" onclick="window.location.reload();">Produits par catégorie</a>
 					<li>
 						<a class="dropdown-item" href="#" onclick="window.location.reload();">Link 2</a>
 					</li>

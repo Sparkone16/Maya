@@ -94,6 +94,12 @@ class Produit
     #[ORM\JoinColumn(nullable: false)]
     private ?Conditionnement $conditionnement = null;
 
+    /**
+     * @var Collection<int, OffreVolume>
+     */
+    #[ORM\OneToMany(targetEntity: OffreVolume::class, mappedBy: 'Produits')]
+    private Collection $offreVolumes;
+
 
     public function getId(): ?int
     {
@@ -140,6 +146,7 @@ class Produit
     {
         $this->dateCreation = new \DateTime('now');
         $this->recettes = new ArrayCollection();
+        $this->offreVolumes = new ArrayCollection();
     }
 
     public function getCategorie(): ?Categorie
@@ -305,6 +312,36 @@ class Produit
     public function setConditionnement(?Conditionnement $conditionnement): static
     {
         $this->conditionnement = $conditionnement;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OffreVolume>
+     */
+    public function getOffreVolumes(): Collection
+    {
+        return $this->offreVolumes;
+    }
+
+    public function addOffreVolume(OffreVolume $offreVolume): static
+    {
+        if (!$this->offreVolumes->contains($offreVolume)) {
+            $this->offreVolumes->add($offreVolume);
+            $offreVolume->setProduits($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOffreVolume(OffreVolume $offreVolume): static
+    {
+        if ($this->offreVolumes->removeElement($offreVolume)) {
+            // set the owning side to null (unless already changed)
+            if ($offreVolume->getProduits() === $this) {
+                $offreVolume->setProduits(null);
+            }
+        }
 
         return $this;
     }

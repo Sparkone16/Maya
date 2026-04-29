@@ -10,6 +10,7 @@ use App\Repository\ProduitRepository;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\ProduitRecherche;
 use App\Form\ProduitRechercheType;
@@ -22,7 +23,7 @@ final class ProduitController extends AbstractController
 {
 
     #[Route('/produit', name: 'app_produit', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager, Request $request, ProduitRepository $repository, SessionInterface $session, PaginatorInterface $paginator): Response
+    public function index(Request $request, ProduitRepository $repository, SessionInterface $session, PaginatorInterface $paginator): Response
     {
         // créer l'objet et le formulaire de recherche
         $produitRecherche = new ProduitRecherche();
@@ -32,102 +33,43 @@ final class ProduitController extends AbstractController
             // optionnel : désactiver CSRF pour formulaires GET 
             // 'csrf_protection' => false,
         ]);
-        if ($request->query->get('categorie')) {
-
-            // Charger l’entité catégorie
-            $categorie = $entityManager->getRepository(Categorie::class)
-                ->find($request->query->get('categorie'));
-
-            if ($categorie) {
-                $produitRecherche->setCategorie($categorie);
-                $formRecherche->get('categorie')->setData($categorie);
-            }
-            if($session->has('ProduitCriteres')){
-                $data = $session->get("ProduitCriteres");
-                $session->set('ProduitCriteres', [
-                    'libelle' => $data['libelle'],
-                    'prixMini' => $data['prixMini'],
-                    'prixMaxi' => $data['prixMaxi'],
-                    'categorieId' => $request->query->get('categorie')
-                ]);
-            } else {
-                $session->set('ProduitCriteres', [
-                    'libelle' => null,
-                    'prixMini' => null,
-                    'prixMaxi' => null,
-                    'categorieId' => $request->query->get('categorie')
-                ]);
-            }
-        }
         $formRecherche->handleRequest($request);
         if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
             $produitRecherche = $formRecherche->getData();
-            if ($produitRecherche->getCategorie()) {
-                $produitRecherche->setCategorieId($produitRecherche->getCategorie()->getId());
-            }
-            // mémoriser les critères de sélection dans une variable de session
-            $session->set('ProduitCriteres', [
-                'libelle' => $produitRecherche->getLibelle(),
-                'prixMini' => $produitRecherche->getPrixMini(),
-                'prixMaxi' => $produitRecherche->getPrixMaxi(),
-                'categorieId' => $produitRecherche->getCategorieId()
-            ]);
             // cherche les produits correspondant aux critères, triés par libellé
             // requête construite dynamiquement alors il est plus simple d'utiliser le querybuilder
-            $lesProduits = $paginator->paginate(
-                $repository->findAllByCriteria($produitRecherche),
-                $request->query->getint('page', 1),
-                5
-            );
+            $lesProduits = $repository->findAllByCriteria($produitRecherche);
         } else {
-            // lire les produits
-            if ($session->has("ProduitCriteres")) {
-                // récupérer les critères en session
-                $data = $session->get("ProduitCriteres");
-
-                $produitRecherche = new ProduitRecherche();
-                $produitRecherche->setLibelle($data['libelle']);
-                $produitRecherche->setPrixMini($data['prixMini']);
-                $produitRecherche->setPrixMaxi($data['prixMaxi']);
-                if ($data['categorieId']) {
-                    $categorie = $entityManager->getRepository(Categorie::class)->find($data['categorieId']);
-                    $produitRecherche->setCategorie($categorie);
-                }
-                $lesProduits = $paginator->paginate(
-                    $repository->findAllByCriteria($produitRecherche),
-                    $request->query->getint('page', 1),
-                    5
-                );
-                $formRecherche = $this->createForm(ProduitRechercheType::class, $produitRecherche);
-                // injecter les critères en session dans le formulaire de recherche
-                $formRecherche->setData($produitRecherche);
-            } else {
-                $prodRech = new ProduitRecherche();
-                $lesProduits = $paginator->paginate(
-                    $repository->findAllOrderByLibelle($prodRech),
-                    $request->query->getint('page', 1),
-                    5
-                );
-            }
+            $lesProduits = $repository->findAllOrderByLibelle();
         }
 
+        $lesProduits = $paginator->paginate(
+            $lesProduits,
+            $request->query->getint('page', 1),
+            5
+        );
         return $this->render('produit/index.html.twig', [
             'formRecherche' => $formRecherche,
             'lesProduits' => $lesProduits,
         ]);
     }
-
-    #[Route('/produit/reinitialiser', name: 'app_produit_reinitialiser', methods: ['GET'])]
-    public function reinitialiser(Request $request): Response
+    #[Route('/produit/{id}/recettes', name: 'app_produit_recettes', methods: ['GET'])]
+    public function recettes(Produit $produit): JsonResponse
     {
-        // supprimer les critères de recherche en session
-        $session = $request->getSession();
-        if ($session->has('ProduitCriteres')) {
-            $session->remove('ProduitCriteres');
+        $recettes = [];
+
+        // parcourir les recettes du produit et construire un tableau de données à retourner en JSON
+        foreach ($produit->getRecettes() as $recette) {
+            $recettes[] = [
+                'id' => $recette->getId(),
+                'nom' => $recette->getNom(),
+            ];
         }
 
-        return $this->redirectToRoute('app_produit');
+        return $this->json($recettes);
     }
+
+
 
     #[Route('/produit/ajouter', name: 'app_produit_ajouter', methods: ['POST', 'GET'])]
     public function ajouter(Request $request, EntityManagerInterface $entityManager): Response
@@ -145,7 +87,9 @@ final class ProduitController extends AbstractController
                 'success',
                 'Le produit ' . $produit->getLibelle() . ' a été ajouté.'
             );
-            return $this->redirectToRoute('app_produit');
+            // rediriger vers l'URL de retour (liste avec page et filtres)  
+            return $this->redirectToRoute('app_produit', $request->query->all());
+
         } else {
             // cas où l'utilisateur a demandé l'ajout, on affiche le formulaire d'ajout
             return $this->render('produit/ajouter.html.twig', [
@@ -169,7 +113,9 @@ final class ProduitController extends AbstractController
                 'Le produit ' . $produit->getLibelle() . ' a été modifié.'
             );
 
-            return $this->redirectToRoute('app_produit');
+            // rediriger vers l'URL de retour (liste avec page et filtres)  
+            return $this->redirectToRoute('app_produit', $request->query->all());
+
         }
         // cas où l'utilisateur a demandé la modification, on affiche le formulaire pour la modification
         return $this->render('produit/modifier.html.twig', [
@@ -188,6 +134,8 @@ final class ProduitController extends AbstractController
                 'Le produit ' . $produit->getLibelle() . ' a été supprimé.'
             );
         }
-        return $this->redirectToRoute('app_produit');
+        // rediriger vers l'URL de retour (liste avec page et filtres)  
+        return $this->redirectToRoute('app_produit', $request->query->all());
+
     }
 }

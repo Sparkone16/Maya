@@ -4,6 +4,9 @@
 {% endblock %}
 
 {% block body %}
+	{# pour passer les query params à la pagination pour les conserver lors du changement de page #}
+	{% set query = app.request.query.all() %}
+
 	<div class="col-md-7 contenu-blanc">
 
 		<h1>
@@ -41,10 +44,10 @@
 							{{ form_errors(formCreation.imageFichier) }}
 						</td>
 						<td class="col-md-2">
-							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_categorie_ajouter') }}" title="Enregistrer nouvelle catégorie">
+							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_categorie_ajouter', query) }}" title="Enregistrer nouvelle catégorie" onclick="windows.location.reload()">
 								<i class="fa fa-save"></i>
 								Enregistrer</button>
-							<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
+							<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie" onclick="windows.location.reload()">
 								<i class="fa fa-eraser"></i>
 								Annuler
 							</button>
@@ -62,10 +65,21 @@
 								<td><img class="img-thumbnail img-fluid" src="{{ vich_uploader_asset(categorie, 'imageFichier') }}"/></td>
 								<!-- formulaire pour demander la modification ou la suppression -->
 								<td>
-									<form>
+									<form method="get">
+										{# c'est GET par défaut, on le précise simplement pour plus de clarté #}
+										{# ajout de tous les paramètres de la query string actuelle pour les conserver lors de la demande de modification ou de suppression #}
+											{% for key, value in app.request.query.all %}
+												{% if value is iterable %}
+													{% for subKey, subValue in value %}
+												<input type="hidden" name="{{ key }}[{{ subKey }}]" value="{{ subValue }}"> {% endfor %}
+											{% else %}
+												<input type="hidden" name="{{ key }}" value="{{ value }}">
+											{% endif %}
+										{% endfor %}
+
 										<input type="hidden" name="page" value="{{ app.request.query.get('page', 1) }}">
 
-										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_categorie_demandermodification', {'id' : categorie.id }) }}" title="Modifier">
+										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_categorie_demandermodification', {'id' : categorie.id }) }}" title="Modifier" onclick="windows.location.reload()">
 											<i class="fa fa-pencil"></i>
 											Modifier
 										</button>
@@ -91,19 +105,17 @@
 								</td>
 
 								<td class="col-md-4">
-									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_categorie_modifier', { 'id' : categorie.id, 'page': app.request.query.get('page', 1) }) }}" title="Enregistrer">
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_categorie_modifier', query|merge({'id': categorie.id})) }}" title="Enregistrer">
 										<i class="fa fa-save"></i>
 										Enregistrer
 									</button>
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
-									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
-										<a href="{{ path('app_categorie', {'page': app.request.query.get('page', 1)}) }}">
-											<i class="fa fa-undo"></i>
-											Annuler
-										</a>
-									</button>
+									<a class="btn btn-warning btn-sm" href="{{ path('app_categorie', query) }}" title="Annuler la modification">
+										<i class="fa fa-undo"></i>
+										Annuler
+									</a>
 								</td>
 								{# Ceci va générer le champ CSRF #}
 								{{ form_rest(formModification) }}

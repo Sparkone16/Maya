@@ -6,6 +6,8 @@ use App\Entity\Categorie;
 use App\Form\CategorieType;
 use App\Entity\Produit;
 use App\Entity\ProduitRecherche;
+use App\Entity\CategorieRecherche;
+use App\Form\CategorieRechercheType;
 use App\Repository\CategorieRepository;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,9 +32,28 @@ final class CategorieController extends AbstractController
         $categorie = new Categorie();
         $formCreation = $this->createForm(CategorieType::class, $categorie);
 
+        // créer l'objet et le formulaire de recherche
+        $categorieRecherche = new CategorieRecherche();
+        // form en GET : Symfony lira les paramètres depuis $request->query
+        $formRecherche = $this->createForm(CategorieRechercheType::class, $categorieRecherche, [
+            'method' => 'GET',
+            // optionnel : désactiver CSRF pour formulaires GET 
+            // 'csrf_protection' => false,
+        ]);
+        $formRecherche->handleRequest($request);
+        if ($formRecherche->isSubmitted() && $formRecherche->isValid()) {
+            $categorieRecherche = $formRecherche->getData();
+            // cherche les produits correspondant aux critères, triés par libellé
+            // requête construite dynamiquement alors il est plus simple d'utiliser le querybuilder
+            $lesCategories = $repository->findAllByCriteria($categorieRecherche);
+        } else {
+            $lesCategories = $repository->findAllOrderByLibelle();
+        }
+
+
         // lire les catégories
         $lesCategories = $paginator->paginate(
-            $repository->findAll(),
+            $lesCategories,
             $request->query->getint('page', 1),
             5
         );
@@ -46,8 +67,7 @@ final class CategorieController extends AbstractController
 
 
     #[Route('/categorie/ajouter', name: 'app_categorie_ajouter', methods: ['POST'])]
-    public function ajouter(Request $request, PaginatorInterface $paginator, EntityManagerInterface $entityManager, CategorieRepository $repository): Response
-
+    public function ajouter(Request $request, EntityManagerInterface $entityManager, CategorieRepository $repository, PaginatorInterface $paginator): Response
     {
         //  $categorie objet de la classe Categorie, il contiendra les valeurs saisies dans les champs après soumission du formulaire.
         //  $request  objet avec les informations de la requête HTTP (GET, POST, ...)
@@ -61,8 +81,7 @@ final class CategorieController extends AbstractController
         //  si le formulaire a été soumis, handleRequest renseigne les propriétés
         //      avec les données saisies par l'utilisateur et retournées par la soumission du formulaire
         $form->handleRequest($request);
-
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             // c'est le cas du retour du formulaire
             //         l'objet $categorie a été automatiquement "hydraté" par Doctrine
             // dire à Doctrine que l'objet sera (éventuellement) persisté
@@ -74,28 +93,14 @@ final class CategorieController extends AbstractController
                 'success',
                 'La catégorie ' . $categorie->getLibelle() . ' a été ajoutée.'
             );
-            // rediriger vers l'affichage des catégories qui comprend le formulaire pour l"ajout d'une nouvelle catégorie
-            return $this->redirectToRoute('app_categorie');
-        } else {
-            // affichage de la liste des catégories avec le formulaire de création et ses erreurs
-            // lire les catégories
-            $lesCategories = $paginator->paginate(
-                $repository->findAll(),
-                $request->query->getint('page', 1),
-                5
-            );
-            // rendre la vue
-            return $this->render('categorie/index.html.twig', [
-                'formCreation' => $form->createView(),
-                'lesCategories' => $lesCategories,
-                'formModification' => null,
-                'idCategorieModif' => null,
-            ]);
         }
+        // rediriger vers l'URL de retour (liste avec page et filtres)  
+        return $this->redirectToRoute('app_categorie', $request->query->all());
     }
 
+
     #[Route('/categorie/demandermodification/{id<\d+>}', name: 'app_categorie_demandermodification', methods: ['GET'])]
-    public function demanderModification(CategorieRepository $repository, PaginatorInterface $paginator, Categorie $categorieModif, Request $request): Response
+    public function demanderModification(Categorie $categorieModif, CategorieRepository $repository, Request $request, PaginatorInterface $paginator): Response
     {
         if ($this->isCsrfTokenValid('action-item' . $categorieModif->getId(), $request->get('_token'))) {
             // créer l'objet et le formulaire de création
@@ -105,22 +110,42 @@ final class CategorieController extends AbstractController
             // on  crée le formulaire de modification
             $formModificationView = $this->createForm(CategorieType::class, $categorieModif)->createView();
 
-            // lire les catégories
-            // Pas de changement majeur nécessaire ici, juste pour confirmer :
+            // créer l'objet et le formulaire de recherche
+            $categorieRecherche = new CategorieRecherche();
+            // form en GET : Symfony lira les paramètres depuis $request->query
+            $formRecherche = $this->createForm(CategorieRechercheType::class, $categorieRecherche, [
+                'method' => 'GET',
+                // optionnel : désactiver CSRF pour formulaires GET --> plus propre car Symfony ne fait pas la vérification automatique pour les GET 
+                // 'csrf_protection' => false,
+            ]);
+            $formRecherche->handleRequest($request);
+            if ($formRecherche->isSubmitted()) {
+                $categorieRecherche = $formRecherche->getData();
+                // cherche les produits correspondant aux critères, triés par libellé
+                // requête construite dynamiquement alors il est plus simple d'utiliser le querybuilder
+                $lesCategories = $repository->findAllByCriteria($categorieRecherche);
+            } else {
+                $lesCategories = $repository->findAllOrderByLibelle();
+            }
+
+            // paginer les catégories
             $lesCategories = $paginator->paginate(
-                $repository->findAll(),
+                $lesCategories,
                 $request->query->getInt('page', 1), // Cela capture bien la page envoyée par le bouton Twig
                 5
             );
             return $this->render('categorie/index.html.twig', [
+                'formRecherche' => $formRecherche,
                 'formCreation' => $formCreation->createView(),
                 'lesCategories' => $lesCategories,
                 'formModification' => $formModificationView,
                 'idCategorieModif' => $categorieModif->getId(),
             ]);
         }
-        return $this->redirectToRoute('app_categorie');
+       // on ajoute la query de retour (page, filtres) pour éviter de perdre le contexte de la liste après l'action
+        return $this->redirectToRoute('app_categorie', $request->query->all());
     }
+
 
     #[Route('/categorie/modifier/{id<\d+>}', name: 'app_categorie_modifier', methods: ['POST'])]
     public function modifier(
@@ -170,12 +195,9 @@ final class CategorieController extends AbstractController
     }
 
 
-    #[Route('/categorie/supprimer/{id<\d+>}', name: 'app_categorie_supprimer')]
-    public function supprimer(Categorie $categorie, Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/categorie/supprimer/{id<\d+>}', name: 'app_categorie_supprimer', methods: ['GET'])]
+    public function supprimer(Categorie $categorie, Request $request, EntityManagerInterface $entityManager)
     {
-        // 1. On récupère le numéro de page
-        $page = $request->query->getInt('page', 1);
-
         // vérifier le token
         if ($this->isCsrfTokenValid('action-item' . $categorie->getId(), $request->get('_token'))) {
             if ($categorie->getProduits()->count() > 0) {
@@ -183,8 +205,7 @@ final class CategorieController extends AbstractController
                     'error',
                     'Il existe des produits dans la catégorie ' . $categorie->getLibelle() . ', elle ne peut pas être supprimée.'
                 );
-                // On redirige avec la page
-                return $this->redirectToRoute('app_categorie', ['page' => $page]);
+                return $this->redirectToRoute('app_categorie', $request->query->all());
             }
             // supprimer la catégorie
             $entityManager->remove($categorie);
@@ -194,70 +215,16 @@ final class CategorieController extends AbstractController
                 'La catégorie ' . $categorie->getLibelle() . ' a été supprimée.'
             );
         }
-
-        // 2. MODIFICATION ICI : redirection vers la bonne page
-        return $this->redirectToRoute('app_categorie', ['page' => $page]);
+        // rediriger vers l'URL de retour (liste avec page et filtres)
+        return $this->redirectToRoute('app_categorie', $request->query->all());
     }
 
-    #[Route('/categorie/statistique', name: 'app_categorie_statistique')]
-    public function statistique(CategorieRepository $repository, ProduitRepository $repositoryProduit): Response
+    #[Route('/categorie/statproduits', name: 'app_categorie_statproduits', methods: ['GET'])]
+    public function statproduits(CategorieRepository $repository): Response
     {
-        $lesCategories = $repository->findAll();
-        $tbCategoriesDesc = [];
-
-        foreach ($lesCategories as $uneCategorie) {
-            $produitRecherche = new ProduitRecherche();
-            $produitRecherche->setCategorie($uneCategorie);
-
-            // On garde l'hydratation en tableau
-            $produitResultat = $repositoryProduit->findAllByCriteria($produitRecherche)
-                ->execute(array(), Query::HYDRATE_ARRAY);
-
-            $nbProduits = count($produitResultat);
-
-            // GESTION DU CAS : Catégorie vide (0 produit)
-            if ($nbProduits === 0) {
-                $tbCategoriesDesc[] = [
-                    "name" => $uneCategorie->getLibelle(),
-                    "nbProduits" => 0,
-                    "prixMin" => 0,
-                    "prixMax" => 0,
-                    "prixMoyen" => 0
-                ];
-                continue; // On passe à la catégorie suivante
-            }
-
-            // Initialisation avec les valeurs du premier produit (syntaxe tableau !)
-            $prixMin = $produitResultat[0]['prix'];
-            $prixMax = $produitResultat[0]['prix'];
-            $sommePrix = 0;
-
-            foreach ($produitResultat as $unProduit) {
-                // CORRECTION ICI : Utilisation des crochets [] au lieu de ->getPrix()
-                $prixActuel = $unProduit['prix'];
-
-                if ($prixActuel < $prixMin) {
-                    $prixMin = $prixActuel;
-                }
-                if ($prixActuel > $prixMax) {
-                    $prixMax = $prixActuel;
-                }
-                $sommePrix += $prixActuel;
-            }
-
-            $unTabCateg = [
-                "name" => $uneCategorie->getLibelle(),
-                "nbProduits" => $nbProduits,
-                "prixMin" => $prixMin,
-                "prixMax" => $prixMax,
-                "prixMoyen" => round($sommePrix / $nbProduits, 2) // Plus de risque de division par zéro grâce au if plus haut
-            ];
-
-            $tbCategoriesDesc[] = $unTabCateg;
-        }
-
-        return $this->render('categorie/statistique.html.twig', [
-            'tbCategorieDesc' => $tbCategoriesDesc
+        return $this->render('categorie/statproduits.html.twig', [
+            'lesCategoriesStats' => $repository->findAllWithStats()
         ]);
     }
+
 }

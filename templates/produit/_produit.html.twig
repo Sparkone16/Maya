@@ -1,3 +1,6 @@
+{# pour passer les query params à la pagination pour les conserver lors du changement de page #}
+{% set query = app.request.query.all() %}
+
 <div
     class="container-fluid contenu">
 
@@ -40,16 +43,16 @@
                 {{ button|default('Enregistrer') }}</button>
         </div>
         <div class="col-md-2">
-            <button class="btn btn-info btn-xs" type="reset" title="Effacer la saisie">
-                <i class="fa fa-eraser">
-                    Annuler</i>
-            </button>
+            <a href="{{ path('app_produit', query)}}" class="btn btn-info btn-xs">
+                <i class="fa fa-eraser"></i>
+                Annuler</a>
         </div>
         <div class="col-md-2">
-            <a href="{{ path('app_produit')}}" class="btn btn-secondary btn-xs">
+            <a href="{{ path('app_produit', query)}}" class="btn btn-secondary btn-xs">
                 <i class="fa fa-undo"></i>
                 Retour liste</a>
         </span>
     </div>
+
     {{ form_end(form) }}
 </div>

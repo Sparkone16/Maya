@@ -39,7 +39,7 @@
 						<td class="col-md-1">Nouveau</td>
 						<td>{{ form_widget(formCreation.intitule, {'attr': {'class': 'col-md-4'}}) }}{{ form_errors(formCreation.intitule) }}</td>
 						<td class="col-md-2">
-							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_ajouter') }}" title="Enregistrer nouvel Race Animal">
+							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_ajouter') }}" title="Enregistrer nouvel Race Animal" onclick="windows.location.reload()">
 								<i class="fa fa-save"></i>
 								Enregistrer
 							</button>
@@ -60,7 +60,7 @@
 								<td>{{ raceAnimal.intitule }}</td>
 								<td>
 									<form>
-										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_race_animal_demandermodification', {'id' : raceAnimal.id }) }}" title="Modifier">
+										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_race_animal_demandermodification', {'id' : raceAnimal.id }) }}" title="Modifier" onclick="windows.location.reload()">
 											<i class="fa fa-pencil"></i>
 											Modifier
 										</button>
@@ -81,7 +81,7 @@
 								<td>{{ form_widget(formModification.intitule, {'attr': {'class': 'col-md-12'}}) }}
 									{{ form_errors(formModification.intitule) }}</td>
 								<td class="col-md-4">
-									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_modifier', {'id' : raceAnimal.id }) }}" title="Enregistrer">
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_race_animal_modifier', {'id' : raceAnimal.id }) }}" title="Enregistrer" onclick="windows.location.reload()">
 										<i class="fa fa-save"></i>
 										Enregistrer</button>
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">

@@ -52,7 +52,7 @@
 							{{ form_errors(formCreation.heureFin) }}</td>
 						<td class="col-md-1"></td>
 						<td class="col-md-1">
-							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_evenement_ajouter')}}" title="Enregistrer nouveau Evenement">
+							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_evenement_ajouter')}}" title="Enregistrer nouveau Evenement" onclick="windows.location.reload()">
 								<i class="fa fa-save"></i>
 								Enregistrer</button>
 							<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
@@ -83,7 +83,7 @@
 								<!-- formulaire pour demander la modification ou la suppression -->
 								<td>
 									<form>
-										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_evenement_demandermodification', {'id' : Evenement.id }) }}" title="Modifier">
+										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_evenement_demandermodification', {'id' : Evenement.id }) }}" title="Modifier" onclick="windows.location.reload()">
 											<i class="fa fa-pencil"></i>
 											Modifier</button>
 										<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_evenement_supprimer', {'id' : Evenement.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cet évènement?');">
@@ -112,13 +112,13 @@
 									{{ form_errors(formModification.heureFin) }}</td>
 								<td></td>
 								<td class="col-md-4">
-									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_evenement_modifier', {'id' : Evenement.id }) }}" title="Enregistrer">
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_evenement_modifier', {'id' : Evenement.id }) }}" title="Enregistrer" onclick="windows.location.reload()">
 										<i class="fa fa-save"></i>
 										Enregistrer</button>
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
-									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
+									<button class="btn btn-warning btn-sm" type="button" title="Annuler" onclick="windows.location.reload()">
 										<a href="{{ path('app_evenement') }}">
 											<i class="fa fa-undo"></i>
 											Annuler
