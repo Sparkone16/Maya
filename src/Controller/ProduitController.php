@@ -10,6 +10,7 @@ use App\Repository\ProduitRepository;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\ProduitRecherche;
 use App\Form\ProduitRechercheType;
@@ -52,6 +53,22 @@ final class ProduitController extends AbstractController
             'lesProduits' => $lesProduits,
         ]);
     }
+    #[Route('/produit/{id}/recettes', name: 'app_produit_recettes', methods: ['GET'])]
+    public function recettes(Produit $produit): JsonResponse
+    {
+        $recettes = [];
+
+        // parcourir les recettes du produit et construire un tableau de données à retourner en JSON
+        foreach ($produit->getRecettes() as $recette) {
+            $recettes[] = [
+                'id' => $recette->getId(),
+                'nom' => $recette->getNom(),
+            ];
+        }
+
+        return $this->json($recettes);
+    }
+
 
 
     #[Route('/produit/ajouter', name: 'app_produit_ajouter', methods: ['POST', 'GET'])]

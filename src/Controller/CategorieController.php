@@ -220,11 +220,12 @@ final class CategorieController extends AbstractController
         return $this->redirectToRoute('app_categorie', $request->query->all());
     }
 
-    #[Route('/categorie/statistique', name: 'app_categorie_statistique')]
-    public function statistique(CategorieRepository $repository): Response
+    #[Route('/categorie/statproduits', name: 'app_categorie_statproduits', methods: ['GET'])]
+    public function statproduits(CategorieRepository $repository): Response
     {
-        return $this->render('categorie/statistique.html.twig', [
-            'stats' => $repository->findAllWithStats()
+        return $this->render('categorie/statproduits.html.twig', [
+            'lesCategoriesStats' => $repository->findAllWithStats()
         ]);
     }
+
 }
