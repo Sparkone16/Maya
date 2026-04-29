@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Categorie;
 use App\Entity\Produit;
+use App\Entity\Conditionnement;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ProduitType extends AbstractType
 {
@@ -48,6 +50,17 @@ class ProduitType extends AbstractType
                 'multiple' => false,
                 'expanded' => false
             ])
+            ->add('imageFichier', VichImageType::class, [
+                'required' => false,
+            ])
+            ->add('conditionnement', EntityType::class, [
+                'label' => 'Conditionnement',
+                'class' => Conditionnement::class,
+                'choice_label' => 'libelle',
+                'multiple' => false,
+                'expanded' => false
+            ])
+
 //            ->add('recettes')    // on ne gère pas les recettes dans la gestion des produits
         ;
     }

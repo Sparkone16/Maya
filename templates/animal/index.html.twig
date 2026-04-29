@@ -7,18 +7,18 @@
 	<div class="col-md-8 contenu-blanc ">
 
 		<h1>
-            {% if lesAnimaux | length == 0 %}
-                Il n'y a pas d'animaux
-            {% elseif lesAnimaux | length == 1%}
-                L'animal
-            {% else %}
-                Les
-                <span>
-                    {{  lesAnimaux | length }}
-                </span>
-                animaux
-            {% endif %}
-        </h1>
+			{% if lesAnimaux | length == 0 %}
+				Il n'y a pas d'animaux
+			{% elseif lesAnimaux | length == 1%}
+				L'animal
+			{% else %}
+				Les
+				<span>
+					{{  lesAnimaux | length }}
+				</span>
+				animaux
+			{% endif %}
+		</h1>
 
 		{{ include('messages.html.twig') }}
 
@@ -31,6 +31,7 @@
 						{#<th>Race</th> #}
 						<th>Date de naissance</th>
 						<th>Race Animal</th>
+						<th>Images</th>
 						<th>Actions</th>
 					</tr>
 				</thead>
@@ -44,6 +45,9 @@
 						{#<td>{{ form_widget(formCreation.race) }}{{ form_errors(formCreation.race) }}</td> #}
 						<td class="col-md-1">{{ form_widget(formCreation.dateNaissance, { 'attr': {'class': 'col-md-12'} }) }}{{ form_errors(formCreation.dateNaissance) }}</td>
 						<td class="col-md-2">{{ form_widget(formCreation.raceAnimal, { 'attr': {'class': 'col-md-12'} }) }}{{ form_errors(formCreation.raceAnimal) }}</td>
+						<td class="col-md-2">{{ form_widget(formCreation.imageFichier) }}
+							{{ form_errors(formCreation.imageFichier) }}
+						</td>
 						<td class="col-md-2">
 							<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_animal_ajouter') }}" title="Enregistrer nouvel animal">
 								<i class="fa fa-save"></i>
@@ -67,14 +71,19 @@
 								{# <td>{{ animal.race }}</td> #}
 								<td>{{ animal.dateNaissance ? animal.dateNaissance|date('d/m/Y') : '—' }}</td>
 								<td>{{ animal.raceAnimal ? animal.raceAnimal.intitule : '—' }}</td>
+								<td><img class="img-thumbnail img-fluid" src="{{ vich_uploader_asset(animal, 'imageFichier') }}"/></td>
+
 								<td>
 									<form>
+										<input type="hidden" name="page" value="{{ app.request.query.get('page', 1) }}">
+
 										<button type="submit" class="btn btn-primary btn-sm" formaction="{{ path('app_animal_demandermodification', {'id' : animal.id }) }}" title="Modifier">
 											<i class="fa fa-pencil"></i>
 											Modifier
 										</button>
-										<button type="submit" class="btn btn-danger btn-sm" formaction="{{ path('app_animal_supprimer', {'id' : animal.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cet animal ?');">
-											<i class="fa fa-trash-o"></i>
+
+										<button class="btn btn-danger btn-sm" type="submit" formaction="{{ path('app_animal_supprimer', {'id' : animal.id }) }}" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');">
+											<i class="fa fa-trash-o "></i>
 											Supprimer
 										</button>
 										<input
@@ -94,15 +103,20 @@
 									{{ form_errors(formModification.dateNaissance) }}</td>
 								<td>{{ form_widget(formModification.raceAnimal, { 'attr': {'class': 'col-md-12'} }) }}
 									{{ form_errors(formModification.raceAnimal) }}</td>
+								<td class="col-md-1">{{ form_widget(formModification.imageFichier) }}
+									{{ form_errors(formModification.imageFichier) }}
+								</td>
+
 								<td class="col-md-4">
-									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_animal_modifier', {'id' : animal.id }) }}" title="Enregistrer">
+									<button class="btn btn-primary btn-sm" type="submit" formaction="{{ path('app_animal_modifier', { 'id' : animal.id, 'page': app.request.query.get('page', 1) }) }}" title="Enregistrer">
 										<i class="fa fa-save"></i>
-										Enregistrer</button>
+										Enregistrer
+									</button>
 									<button class="btn btn-info btn-sm" type="reset" title="Effacer la saisie">
 										<i class="fa fa-eraser"></i>
 										Effacer</button>
 									<button class="btn btn-warning btn-sm" type="button" title="Annuler">
-										<a href="{{ path('app_animal') }}">
+										<a href="{{ path('app_animal', {'page': app.request.query.get('page', 1)}) }}">
 											<i class="fa fa-undo"></i>
 											Annuler
 										</a>

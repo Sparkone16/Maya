@@ -53,6 +53,7 @@
                     <th>Libellé</th>
                     <th>Catégorie</th>
                     <th class="col-md-1">Prix</th>
+                    <th>Image</th>
                     <th class="col-md-6">Actions<span class="pull-right" ><a href="{{ path('app_produit_ajouter')}}" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> Ajouter nouveau produit</a></span></th>
                 </tr>
                 </thead>
@@ -64,7 +65,8 @@
                         <td>{{ produit.libelle }}</td>
                         <td>{{ produit.categorie.getLibelle() }}</td>
                         <td>{{ produit.getPrix() | number_format(2, ',', ' ') }}</td>
-                        <td class="row">
+                        <td><img class="img-thumbnail img-fluid col-md-5" src="{{ vich_uploader_asset(produit, 'imageFichier') }}"/></td>
+                        <td>
 
                         <!-- formulaire pour demander la modification ou la suppression -->
                             <form>

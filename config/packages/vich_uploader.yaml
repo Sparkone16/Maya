@@ -6,3 +6,11 @@ vich_uploader:
             uri_prefix: /images/categories
             upload_destination: '%kernel.project_dir%/public/images/categories'
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer     
+        produits:
+            uri_prefix: /images/produits
+            upload_destination: '%kernel.project_dir%/public/images/produits'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer     
+        animaux:
+            uri_prefix: /images/animaux
+            upload_destination: '%kernel.project_dir%/public/images/animaux'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer     

@@ -15,10 +15,10 @@ use Knp\Component\Pager\PaginatorInterface;
 final class EvenementController extends AbstractController
 {
     #[Route('/evenement', name: 'app_evenement', methods: ['GET'])]
-    public function index(Request $request, EvenementRepository $repository, PaginatorInterface $paginator ): Response
+    public function index(Request $request, EvenementRepository $repository, PaginatorInterface $paginator): Response
     {
         // créer l'objet et le formulaire de création
-        $Evenement= new Evenement();
+        $Evenement = new Evenement();
         $formCreation = $this->createForm(EvenementType::class, $Evenement);
 
         // Pagination
@@ -28,15 +28,15 @@ final class EvenementController extends AbstractController
             5
         );
         return $this->render('evenement/index.html.twig', [
-            'formCreation' => $formCreation-> createView(),
+            'formCreation' => $formCreation->createView(),
             'lesEvenements' => $lesEvenements,
             'formModification' => null,
             'idEvenementModif' => null,
 
         ]);
     }
-        #[Route('/evenement/ajouter', name: 'app_evenement_ajouter', methods: ['POST'])]
-    public function ajouter(Request $request, EntityManagerInterface $entityManager, EvenementRepository $repository): Response
+    #[Route('/evenement/ajouter', name: 'app_evenement_ajouter', methods: ['POST'])]
+    public function ajouter(Request $request, PaginatorInterface $paginator, EntityManagerInterface $entityManager, EvenementRepository $repository): Response
 
     {
         //  $Evenement objet de la classe Evenement, il contiendra les valeurs saisies dans les champs après soumission du formulaire.
@@ -69,7 +69,11 @@ final class EvenementController extends AbstractController
         } else {
             // affichage de la liste des évènements avec le formulaire de création et ses erreurs
             // lire les évènements
-            $lesEvenements = $repository->findAll();
+            $lesEvenements = $paginator->paginate(
+                $repository->findAll(),
+                $request->query->getint('page', 1),
+                5
+            );
             // rendre la vue
             return $this->render('evenement/index.html.twig', [
                 'formCreation' => $form->createView(),
@@ -80,33 +84,37 @@ final class EvenementController extends AbstractController
         }
     }
     #[Route('/evenement/demandermodification/{id<\d+>}', name: 'app_evenement_demandermodification', methods: ['GET'])]
-    public function demanderModification(EvenementRepository $repository, Evenement $EvenementModif, Request $request): Response
+    public function demanderModification(EvenementRepository $repository, PaginatorInterface $paginator, Evenement $EvenementModif, Request $request): Response
     {
         if ($this->isCsrfTokenValid('action-item' . $EvenementModif->getId(), $request->get('_token'))) {
-        // créer l'objet et le formulaire de création
-        $Evenement = new Evenement();
-        $formCreation = $this->createForm(EvenementType::class, $Evenement);
+            // créer l'objet et le formulaire de création
+            $Evenement = new Evenement();
+            $formCreation = $this->createForm(EvenementType::class, $Evenement);
 
-        // on  crée le formulaire de modification
-        $formModificationView = $this->createForm(EvenementType::class, $EvenementModif)->createView();
+            // on  crée le formulaire de modification
+            $formModificationView = $this->createForm(EvenementType::class, $EvenementModif)->createView();
 
-        // lire les évènements
-        $lesEvenements = $repository->findAll();
-        return $this->render('evenement/index.html.twig', [
-            'formCreation' => $formCreation->createView(),
-            'lesEvenements' => $lesEvenements,
-            'formModification' => $formModificationView,
-            'idEvenementModif' => $EvenementModif->getId(),
-        ]);
-    }
+            $lesEvenements = $paginator->paginate(
+                $repository->findAll(),
+                $request->query->getint('page', 1),
+                5
+            );
+            return $this->render('evenement/index.html.twig', [
+                'formCreation' => $formCreation->createView(),
+                'lesEvenements' => $lesEvenements,
+                'formModification' => $formModificationView,
+                'idEvenementModif' => $EvenementModif->getId(),
+            ]);
+        }
         return $this->redirectToRoute('app_evenement');
     }
 
     #[Route('/evenement/modifier/{id<\d+>}', name: 'app_evenement_modifier', methods: ['POST'])]
-    public function modifier(Evenement $Evenement, Request $request, EntityManagerInterface $entityManager, EvenementRepository $repository): Response
+    public function modifier(Evenement $Evenement, PaginatorInterface $paginator, Request $request, EntityManagerInterface $entityManager, EvenementRepository $repository): Response
     // public function modifier(Evenement $Evenement = null, $id = null, Request $request, EntityManagerInterface $entityManager, EvenementRepository $repository)
     {
         //  Symfony 4 est capable de retrouver la évènements à l'aide de Doctrine ORM directement en utilisant l'id passé dans la route
+        $page = $request->query->getInt('page', 1);
         $form = $this->createForm(EvenementType::class, $Evenement);
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
@@ -119,14 +127,18 @@ final class EvenementController extends AbstractController
                 'L\'évènement ' . $Evenement->getTitre() . ' a été modifiée.'
             );
             // rediriger vers l'affichage des évènements qui comprend le formulaire pour l"ajout d'une nouvelle évènement
-            return $this->redirectToRoute('app_evenement');
+            return $this->redirectToRoute('app_evenement', ['page' => $page]);
         } else {
             // affichage de la liste des évènements avec le formulaire de modification et ses erreurs
             // créer l'objet et le formulaire de création
             $Evenement = new Evenement();
             $formCreation = $this->createForm(EvenementType::class, $Evenement);
             // lire les évènements
-            $lesEvenements = $repository->findAll();
+            $lesEvenements = $paginator->paginate(
+                $repository->findAll(),
+                $page,
+                5
+            );
             // rendre la vue
             return $this->render('evenement/index.html.twig', [
                 'formCreation' => $formCreation->createView(),
@@ -136,18 +148,18 @@ final class EvenementController extends AbstractController
             ]);
         }
     }
-        #[Route('/evenement/supprimer/{id<\d+>}', name: 'app_evenement_supprimer', methods: ['GET'])]
+    #[Route('/evenement/supprimer/{id<\d+>}', name: 'app_evenement_supprimer', methods: ['GET'])]
     public function supprimer(Evenement $Evenement, Request $request, EntityManagerInterface $entityManager)
     {
-            // supprimer l'évènement
-            $entityManager->remove($Evenement);
-            $entityManager->flush();
-            $this->addFlash(
-                'success',
-                'L\'évènement' . $Evenement->getTitre() . ' a été supprimée.'
-            );
-        
-        return $this->redirectToRoute('app_evenement');
-    }
+        $page = $request->query->getInt('page', 1);
+        // supprimer l'évènement
+        $entityManager->remove($Evenement);
+        $entityManager->flush();
+        $this->addFlash(
+            'success',
+            'L\'évènement' . $Evenement->getTitre() . ' a été supprimée.'
+        );
 
+        return $this->redirectToRoute('app_evenement', ['page' => $page]);
+    }
 }
